@@ -1,0 +1,27 @@
+apiVersion: k8s-begining/v1
+kind: Deployment
+metadata:
+  name: k8s-begining-service
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: k8s-begining-service
+  template:
+    metadata:
+      labels:
+        app: k8s-begining-service
+    spec:
+      container:
+        - name: main
+          image: anhle3532/k8s-begining:dev-latest
+          ports:
+            - containerPort: 8000
+            - containerPort: 9000
+          volumeMounts:
+            - name: config-volume
+              mountPath: /data/conf
+      volumes:
+        - name: config-volume
+          configMap:
+            name: k8s-begining-config
