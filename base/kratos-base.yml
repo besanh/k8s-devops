@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kratos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kratos
+  template:
+    metadata:
+      labels:
+        app: kratos
+    spec:
+      containers:
+        - name: kratos
+          image: oryd/kratos:v1.1.0
+          ports:
+            - containerPort: 4433
+              name: public
+            - containerPort: 4434
+              name: admin
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "250m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kratos
+spec:
+  selector:
+    app: kratos
+  ports:
+    - name: public
+      port: 4433
+      targetPort: 4433
+      protocol: TCP
+    - name: admin
+      port: 4434
+      targetPort: 4434
+      protocol: TCP
