@@ -1,21 +1,25 @@
 name: Deploy Prod (Kustomize)
 on:
     push:
-        branches: [dev]
-        paths: ["overlays/prod/**"]
-    workflow_dispatch: # Manual prod deploys
+        branches: [main]
+        paths: ["overlays/prod/**", "base/**"]
+    pull_request:
+        paths: ["overlays/prod/**", "base/**"]
 
 jobs:
     deploy-prod:
-        runs-on: ubuntu-latest
-        environment: production # GitHub approval required
+        runs-on: ubuntu-latest # Native GitHub Ubuntu
+        environment: prod
         steps:
-            # Same install steps as dev...
+            - uses: actions/checkout@v4
+
+            # Install Kustomize directly (no Azure action)
             - name: Install Kustomize
               run: |
                   curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
                   sudo mv kustomize /usr/local/bin/
 
+            # Install kubectl directly
             - name: Install kubectl
               run: |
                   curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
@@ -29,3 +33,4 @@ jobs:
                   echo "$KUBECONFIG" | base64 -d > kubeconfig.yaml
                   export KUBECONFIG=kubeconfig.yaml
                   kustomize build overlays/prod | kubectl apply -f -
+                  kubectl rollout status deployment/kratos -n kratos-prod --timeout=300s
