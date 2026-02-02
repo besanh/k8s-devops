@@ -9,8 +9,8 @@ resources:
 configMapGenerator:
   - name: k8s-begining-config
     files:
-      - config.yaml
+      - config.yml
 
 images:
   - name: anhle3532/k8s-begining
-    newTag: prod-latest
+    newTag: dev-latest
