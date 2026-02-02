@@ -5,8 +5,8 @@ resources:
   - ../../base
   - ../../../../infrastructure/dev
 
-patchesStrategicMerge:
-  - config.yml
+patches:
+  - path: config.yml
 
 configMapGenerator:
   - name: k8s-begining-config
