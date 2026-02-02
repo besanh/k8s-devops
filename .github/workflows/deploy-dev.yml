@@ -1,9 +1,10 @@
 name: Deploy Dev (Kustomize)
 on:
     push:
-        branches: [main]
+        branches: [dev]
         paths: ["overlays/dev/**", "base/**"]
     pull_request:
+        branches: [dev]
         paths: ["overlays/dev/**", "base/**"]
 
 jobs:

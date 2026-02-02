@@ -4,6 +4,7 @@ on:
         branches: [main]
         paths: ["overlays/prod/**", "base/**"]
     pull_request:
+        branches: [main]
         paths: ["overlays/prod/**", "base/**"]
 
 jobs:
