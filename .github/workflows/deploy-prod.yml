@@ -32,9 +32,9 @@ jobs:
 
             - name: Deploy to K3s-Prod
               env:
-                  KUBECONFIG: ${{ secrets.K3S_PROD_KUBECONFIG }}
+                  KUBECONFIG_B64: ${{ secrets.K3S_PROD_KUBECONFIG }}
               run: |
-                  echo "$KUBECONFIG" | base64 -d > kubeconfig.yaml
-                  export KUBECONFIG=kubeconfig.yaml
+                  echo "$KUBECONFIG_B64" | base64 -d > $HOME/kubeconfig.yaml
+                  export KUBECONFIG=$HOME/kubeconfig.yaml
                   kustomize build --load-restrictor LoadRestrictionsNone overlays/prod | kubectl apply -f -
-                  kubectl rollout status deployment/kratos -n kratos-prod --timeout=300s
+                  kubectl rollout status deployment/prod-kratos -n kratos-prod --timeout=300s
