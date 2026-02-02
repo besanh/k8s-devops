@@ -3,8 +3,8 @@ kind: Kustomization
 
 resources:
   - ../../base
-  - ../../infrastructure/dev/postgres-external.yml
-  - ../../infrastructure/dev/redis-external.yml
+  - ../../../../infrastructure/dev/postgres-external.yml
+  - ../../../../infrastructure/dev/redis-external.yml
 
 configMapGenerator:
   - name: k8s-begining-config
