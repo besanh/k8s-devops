@@ -9,15 +9,17 @@ on:
 
 jobs:
     deploy-dev:
-        runs-on: ubuntu-latest # Native GitHub Ubuntu
+        runs-on: ubuntu-latest
         environment: dev
         steps:
             - uses: actions/checkout@v4
 
-            # Install Kustomize directly (no Azure action)
+            # Install Kustomize directly
             - name: Install Kustomize
               run: |
-                  curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+                  KUSTOMIZE_VERSION=v5.3.0
+                  curl -sLO "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F${KUSTOMIZE_VERSION}/kustomize_${KUSTOMIZE_VERSION}_linux_amd64.tar.gz"
+                  tar xzf kustomize_${KUSTOMIZE_VERSION}_linux_amd64.tar.gz
                   sudo mv kustomize /usr/local/bin/
 
             # Install kubectl directly
