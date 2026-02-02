@@ -14,5 +14,5 @@ jobs:
             - name: Deploy to k8s
               run: |
                   export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
-                  kubectl apply -k services/k8s-begining/overlay/dev
+                  kubectl apply -k services/k8s-service/overlay/dev
                   kubectl rollout status deployment/k8s-begining-service
