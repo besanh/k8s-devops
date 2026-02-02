@@ -1,7 +1,7 @@
 name: Deploy Prod (Kustomize)
 on:
     push:
-        branches: [main]
+        branches: [dev]
         paths: ["overlays/prod/**"]
     workflow_dispatch: # Manual prod deploys
 
