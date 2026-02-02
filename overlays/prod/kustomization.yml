@@ -1,0 +1,18 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base/namespace-prod.yaml
+  - ../../base/kratos-base.yaml
+  - ../../base/microservice-base.yaml
+  - ../../secrets/prod-kratos.yaml
+
+namePrefix: prod-
+namespace: kratos-prod
+images:
+  - name: oryd/kratos
+    newTag: "prod-latest"
+patchesStrategicMerge:
+  - kratos-patch.yaml
+  - microservice-patch.yaml
+commonLabels:
+  env: prod

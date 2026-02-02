@@ -1,8 +1,0 @@
-apiVersion: k8s-begining/v1
-kind: Service
-metadata:
-  name: postgres-service
-spec:
-  selector:
-    app: ExternalName
-    externalName: 172.16.5.133

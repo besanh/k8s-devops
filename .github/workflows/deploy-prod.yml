@@ -1,0 +1,31 @@
+name: Deploy Prod (Kustomize)
+on:
+    push:
+        branches: [main]
+        paths: ["overlays/prod/**"]
+    workflow_dispatch: # Manual prod deploys
+
+jobs:
+    deploy-prod:
+        runs-on: ubuntu-latest
+        environment: production # GitHub approval required
+        steps:
+            # Same install steps as dev...
+            - name: Install Kustomize
+              run: |
+                  curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+                  sudo mv kustomize /usr/local/bin/
+
+            - name: Install kubectl
+              run: |
+                  curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+                  chmod +x kubectl
+                  sudo mv kubectl /usr/local/bin/
+
+            - name: Deploy to K3s-Prod
+              env:
+                  KUBECONFIG: ${{ secrets.K3S_PROD_KUBECONFIG }}
+              run: |
+                  echo "$KUBECONFIG" | base64 -d > kubeconfig.yaml
+                  export KUBECONFIG=kubeconfig.yaml
+                  kustomize build overlays/prod | kubectl apply -f -

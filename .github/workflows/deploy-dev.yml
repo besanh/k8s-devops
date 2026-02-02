@@ -1,0 +1,41 @@
+name: Deploy Dev (Kustomize)
+on:
+    push:
+        branches: [main]
+        paths: ["overlays/dev/**", "base/**"]
+    pull_request:
+        paths: ["overlays/dev/**", "base/**"]
+
+jobs:
+    deploy-dev:
+        runs-on: ubuntu-latest # Native GitHub Ubuntu
+        environment: dev
+        steps:
+            - uses: actions/checkout@v4
+
+            # Install Kustomize directly (no Azure action)
+            - name: Install Kustomize
+              run: |
+                  curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+                  sudo mv kustomize /usr/local/bin/
+
+            # Install kubectl directly
+            - name: Install kubectl
+              run: |
+                  curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+                  chmod +x kubectl
+                  sudo mv kubectl /usr/local/bin/
+
+            - name: Deploy to K3s-Dev
+              env:
+                  KUBECONFIG: ${{ secrets.K3S_DEV_KUBECONFIG }}
+              run: |
+                  echo "$KUBECONFIG" | base64 -d > kubeconfig.yaml
+                  export KUBECONFIG=kubeconfig.yaml
+
+                  # Validate first
+                  kustomize build overlays/dev | kubectl apply -f - --dry-run=client
+
+                  # Deploy
+                  kustomize build overlays/dev | kubectl apply -f -
+                  kubectl rollout status deployment/kratos -n kratos-dev --timeout=300s

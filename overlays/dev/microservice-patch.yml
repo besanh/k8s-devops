@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8s-begining-service # Overrides "not-set"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: k8s-begining-service
+  template:
+    metadata:
+      labels:
+        app: k8s-begining-service
+    spec:
+      containers:
+        - name: k8s-begining-service # Matches container name
+          image: anhle3532/k8s-begining-service:dev-latest
+          env: # ADDED: Dev env vars
+            - name: ENV
+              value: "dev"
+            - name: LOG_LEVEL
+              value: "debug"
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: k8s-begining-service
+spec:
+  selector:
+    app: k8s-begining-service
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000
+    - name: grpc
+      port: 9000
+      targetPort: 9000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: k8s-begining-service
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+    - host: 172.16.5.133 # Dev hostname
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: k8s-begining-service
+                port:
+                  number: 8000
