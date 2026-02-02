@@ -35,5 +35,5 @@ jobs:
               run: |
                   echo "$KUBECONFIG" | base64 -d > kubeconfig.yaml
                   export KUBECONFIG=kubeconfig.yaml
-                  kustomize build overlays/prod | kubectl apply -f -
+                  kustomize build --load-restrictor LoadRestrictionsNone overlays/prod | kubectl apply -f -
                   kubectl rollout status deployment/kratos -n kratos-prod --timeout=300s
