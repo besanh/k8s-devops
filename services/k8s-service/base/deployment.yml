@@ -1,4 +1,4 @@
-apiVersion: k8s-begining/v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: k8s-begining-service
@@ -12,9 +12,10 @@ spec:
       labels:
         app: k8s-begining-service
     spec:
-      container:
+      containers:
         - name: main
           image: anhle3532/k8s-begining:dev-latest
+          args: ["-conf", "/data/conf"]
           ports:
             - containerPort: 8000
             - containerPort: 9000
