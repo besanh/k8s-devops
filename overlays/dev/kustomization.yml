@@ -1,19 +1,11 @@
-apiVersion: kustomize.config.k8s.io/v1beta1
+apiVersion: k8s.k8s.io/v1beta1
 kind: Kustomization
+namespace: k8s-begining-dev
 resources:
-  - ../../base/namespace-dev.yml
-  - ../../base/kratos-base.yml
-  - ../../base/microservice-base.yml
-  - ../../secrets/dev-kratos.yml
-
-namePrefix: dev-
-namespace: kratos-dev
+  - ../../../base
+patchesStrategicMerge:
+  - deployment-patch.yaml
+  - ingress-patch.yaml
 images:
-  - name: oryd/kratos
-    newTag: "dev-latest"
-patches:
-  - path: kratos-patch.yml
-  - path: microservice-patch.yml
-labels:
-  - pairs:
-      app: dev
+  - name: anhle3532/k8s-begining
+    newTag: dev-latest # Set by CICD

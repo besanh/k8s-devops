@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8s-begining
+spec:
+  replicas: 1 # Patched in overlays
+  selector:
+    matchLabels:
+      app: k8s-begining
+  template:
+    metadata:
+      labels:
+        app: k8s-begining
+    spec:
+      containers:
+        - name: app
+          image: anhle3532/k8s-begining:dev-latest # Updated by CICD
+          ports:
+            - containerPort: 8000
+            - containerPort: 9000
+          volumeMounts:
+            - name: config
+              mountPath: /app/configs
+      volumes:
+        - name: config
+          configMap:
+            name: k8s-begining-config
