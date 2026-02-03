@@ -9,7 +9,7 @@ on:
 
 permissions:
   contents: read
-  id-token: write # For OIDC
+  id-token: write
 
 jobs:
   deploy:
@@ -18,18 +18,22 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Setup Kustomize
-        uses: kustomize-everything/action-kustomize@v1 # Replaces manual install
+        uses: kustomize-everything/action-kustomize@v2.0.0
         with:
           kustomize_version: v5.3.0
 
       - name: Install kubectl
         uses: azure/setup-kubectl@v4
         with:
-          version: v1.29.0
+          version: "v1.29.0"
 
       - name: Validate manifests
+        env:
+          KUBECONFIG_B64: ${{ secrets.K3S_DEV_KUBECONFIG }}
         run: |
-          kustomize build --load-restrictor=LoadRestrictionsNone overlays/dev | kubeval --strict
+          echo "$KUBECONFIG_B64" | base64 -d > kubeconfig
+          export KUBECONFIG=kubeconfig
+          kustomize build overlays/dev | kubectl apply --dry-run=server -f -
 
       - name: Deploy to K8s
         env:
@@ -37,10 +41,15 @@ jobs:
         run: |
           echo "$KUBECONFIG_B64" | base64 -d > kubeconfig
           export KUBECONFIG=kubeconfig
-          kustomize build --load-restrictor=LoadRestrictionsNone overlays/dev | kubectl apply -f -
-          kubectl get deployments -n k8s-begining-dev -o name | xargs -I {} kubectl rollout status {} -n k8s-begining-dev --timeout=300s
-        # Cleanup kubeconfig auto-handled by runner
+          kustomize build overlays/dev | kubectl apply -f -
+          kubectl get deployments -n k8s-begining-dev -o name | \
+            xargs -I {} kubectl rollout status {} -n k8s-begining-dev --timeout=300s
 
       - name: Post-deploy check
         if: success()
-        run: kubectl get all -n k8s-begining-dev
+        env:
+          KUBECONFIG_B64: ${{ secrets.K3S_DEV_KUBECONFIG }}
+        run: |
+          echo "$KUBECONFIG_B64" | base64 -d > kubeconfig
+          export KUBECONFIG=kubeconfig
+          kubectl get all -n k8s-begining-dev
