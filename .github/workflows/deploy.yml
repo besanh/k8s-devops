@@ -1,44 +1,44 @@
 name: Deploy to K8s
 on:
-    push:
-        branches: [main]
+  push:
+    branches: [dev]
 jobs:
-    deploy:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-            - name: Login to Docker Hub
-              uses: docker/login-action@v3
-              with:
-                  username: ${{ secrets.DOCKER_USERNAME }}
-                  password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-            - name: Build & Push
-              uses: docker/build-push-action@v5
-              with:
-                  push: true
-                  tags: anhle3532/k8s-begining:${{ github.sha }}
+      - name: Build & Push
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: anhle3532/k8s-begining:${{ github.sha }}
 
-            - name: Install Kustomize
-              run: |
-                  KUSTOMIZE_VERSION=v5.3.0
-                  curl -sLO "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F${KUSTOMIZE_VERSION}/kustomize_${KUSTOMIZE_VERSION}_linux_amd64.tar.gz"
-                  tar xzf kustomize_${KUSTOMIZE_VERSION}_linux_amd64.tar.gz
-                  sudo mv kustomize /usr/local/bin/
+      - name: Install Kustomize
+        run: |
+          KUSTOMIZE_VERSION=v5.3.0
+          curl -sLO "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F${KUSTOMIZE_VERSION}/kustomize_${KUSTOMIZE_VERSION}_linux_amd64.tar.gz"
+          tar xzf kustomize_${KUSTOMIZE_VERSION}_linux_amd64.tar.gz
+          sudo mv kustomize /usr/local/bin/
 
-            - name: Checkout Devops Repo
-              uses: actions/checkout@v4
-              with:
-                  repository: besanh/k8s-devops
-                  token: ${{ secrets.DEPLOY_TOKEN }}
-                  path: k8s-devops
+      - name: Checkout Devops Repo
+        uses: actions/checkout@v4
+        with:
+          repository: besanh/k8s-devops
+          token: ${{ secrets.DEPLOY_TOKEN }}
+          path: k8s-devops
 
-            - name: Update Image Tag
-              run: |
-                  cd k8s-devops/overlays/dev
-                  kustomize edit set image anhle3532/k8s-begining:${{ github.sha }}
-                  git config user.name "anhle3532"
-                  git config user.email "[EMAIL_ADDRESS]"
-                  git commit -am "Update image dev ${{ github.sha }}"
-                  git push
+      - name: Update Image Tag
+        run: |
+          cd k8s-devops/overlays/dev
+          kustomize edit set image anhle3532/k8s-begining:${{ github.sha }}
+          git config user.name "anhle3532"
+          git config user.email "[EMAIL_ADDRESS]"
+          git commit -am "Update image dev ${{ github.sha }}"
+          git push
