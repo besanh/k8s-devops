@@ -1,11 +1,15 @@
-name: Deploy to K8s
+name: Deploy to Dev K8s
 on:
   push:
     branches: [dev]
     paths:
       - "overlays/dev/**"
       - "base/**"
-  workflow_dispatch: # Allow manual trigger
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write # For OIDC
 
 jobs:
   deploy:
@@ -13,25 +17,30 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Kustomize
-        run: |
-          KUSTOMIZE_VERSION=v5.3.0
-          curl -sLO "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F${KUSTOMIZE_VERSION}/kustomize_${KUSTOMIZE_VERSION}_linux_amd64.tar.gz"
-          tar xzf kustomize_${KUSTOMIZE_VERSION}_linux_amd64.tar.gz
-          sudo mv kustomize /usr/local/bin/
+      - name: Setup Kustomize
+        uses: kustomize-everything/action-kustomize@v1 # Replaces manual install
+        with:
+          kustomize_version: v5.3.0
 
       - name: Install kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: v1.29.0
+
+      - name: Validate manifests
         run: |
-          KUBECTL_VERSION=v1.29.0
-          curl -sLO "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl"
-          chmod +x kubectl
-          sudo mv kubectl /usr/local/bin/
+          kustomize build --load-restrictor=LoadRestrictionsNone overlays/dev | kubeval --strict
 
       - name: Deploy to K8s
         env:
           KUBECONFIG_B64: ${{ secrets.K3S_DEV_KUBECONFIG }}
         run: |
-          echo "$KUBECONFIG_B64" | base64 -d > $HOME/kubeconfig.yaml
-          export KUBECONFIG=$HOME/kubeconfig.yaml
-          kustomize build --load-restrictor LoadRestrictionsNone overlays/dev | kubectl apply -f -
-          kubectl rollout status deployment/k8s-begining -n k8s-begining-dev --timeout=300s
+          echo "$KUBECONFIG_B64" | base64 -d > kubeconfig
+          export KUBECONFIG=kubeconfig
+          kustomize build --load-restrictor=LoadRestrictionsNone overlays/dev | kubectl apply -f -
+          kubectl get deployments -n k8s-begining-dev -o name | xargs -I {} kubectl rollout status {} -n k8s-begining-dev --timeout=300s
+        # Cleanup kubeconfig auto-handled by runner
+
+      - name: Post-deploy check
+        if: success()
+        run: kubectl get all -n k8s-begining-dev
