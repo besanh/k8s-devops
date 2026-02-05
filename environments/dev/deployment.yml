@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: anhle3532/k8s-begining:latest
+          image: anhle3532/k8s-begining:30b1f368
           imagePullPolicy: Always
           ports:
             - containerPort: 8000
