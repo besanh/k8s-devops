@@ -65,6 +65,18 @@ This connects ArgoCD to your Git repository to manage the app.
 # 1. Apply the Application Manifest
 kubectl apply -f argocd/applications/k8s-begining.yml
 
+# Alternative: Create App via CLI
+# You can also use the UI or this command:
+argocd app create k8s-begining-dev \
+  --repo https://github.com/besanh/k8s-devops.git \
+  --path environments/dev \
+  --revision dev \
+  --dest-server https://kubernetes.default.svc \
+  --dest-namespace k8s-begining-dev \
+  --sync-policy automated \
+  --auto-prune \
+  --self-heal
+
 # 2. Sync the Application (if auto-sync is off or to force update)
 argocd app sync k8s-begining-dev
 
