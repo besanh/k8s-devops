@@ -53,7 +53,7 @@ spec:
               cpu: "500m"
           volumeMounts:
             - name: postgres-storage
-              mountPath: /var/lib/postgresql/data
+              mountPath: /home/postgres/pgdata/data
       volumes:
         - name: postgres-storage
           persistentVolumeClaim:
