@@ -1,0 +1,7 @@
+apiVersion: v2
+name: k8s-begining-dev
+version: 0.1.0
+dependencies:
+  - name: k8s-begining
+    version: 0.1.0
+    repository: file://../../charts/k8s-begining

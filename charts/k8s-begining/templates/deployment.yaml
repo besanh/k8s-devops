@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: {{ include "k8s-begining.fullname" . }}
+spec:
+    replicas: {{ .Values.replicaCount}}
+    selector:
+        matchLabels:
+            app: {{ include "k8s-begining.name" . }}
+    template:
+        metadata:
+            labels:
+                app: {{ include "k8s-begining.name" . }}
+        spec:
+            containers:
+                - name: k8s-begining-service
+                  image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+                  imagePullPolicy: {{ .Values.image.pullPolicy }}
+
+                  ports:
+                    - name: http
+                      containerPort: {{ .Values.service.http.port }}
+                    - name: grpc
+                      containerPort: {{ .Values.service.grpc.port }}
+
+                  env:
+                    {{- range $key, $value := .Values.env }}
+                    - name: {{ $key }}
+                      value: "{{ $value }}"
+                    {{- end }}
+
+                  envFrom:
+                    - secretRef:
+                        name: {{ include "k8s-begining.fullname" . }}-secret
+
+                  volumeMounts:
+                    - name: config
+                      mountPath: /app/configs
+                      readOnly: true
+
+                  resources:
+                    {{- toYaml .Values.resources | nindent 12 }}
+
+                  readinessProbe:
+                    httpGet:
+                        path: /health
+                        port: http
+                    initialDelaySeconds: 5
+                    periodSeconds: 10
+
+                  livenessProbe:
+                    httpGet:
+                        path: /health
+                        port: http
+                    initialDelaySeconds: 15
+                    periodSeconds: 20
+
+            volumes:
+                - name: config
+                  configMap:
+                    name: {{ include "k8s-begining.fullname" . }}-config
