@@ -29,9 +29,11 @@ spec:
                       value: "{{ $value }}"
                     {{- end }}
 
+                  {{- if .Values.secret }}
                   envFrom:
                     - secretRef:
                         name: {{ include "k8s-begining.fullname" . }}-secret
+                  {{- end }}
 
                   volumeMounts:
                     - name: config
