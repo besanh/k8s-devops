@@ -6,13 +6,11 @@ metadata:
   finalizers:
     - resources-finalizer.argocd.argoproj.io
   annotations:
-    # Image Updater Configuration
-    argocd-image-updater.argoproj.io/image-list: app=anhle3532/k8s-begining
-    argocd-image-updater.argoproj.io/app.update-strategy: newest-build
-    argocd-image-updater.argoproj.io/app.allow-tags: regexp:^dev-sha-.*
+    # Image Updater Configuration - Track digest of dev-latest
+    argocd-image-updater.argoproj.io/image-list: app=anhle3532/k8s-begining:dev-latest
+    argocd-image-updater.argoproj.io/app.update-strategy: digest
     argocd-image-updater.argoproj.io/app.helm.image-name: k8s-begining.image.repository
     argocd-image-updater.argoproj.io/app.helm.image-tag: k8s-begining.image.tag
-    # No Git write-back - store override in ArgoCD
     argocd-image-updater.argoproj.io/write-back-method: argocd
 spec:
   project: default
