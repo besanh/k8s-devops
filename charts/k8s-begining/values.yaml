@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: anhle3532/k8s-begining
   tag: latest
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 service:
   http:
