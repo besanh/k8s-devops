@@ -5,7 +5,6 @@ metadata:
     name: {{ include "k8s-begining.fullname" . }}-config
 data:
 {{- range $name, $content := .Values.config.files }}
-    {{ $name }}: |
-        {{- $content | toString | nindent 4 }}
+    {{ $name }}: {{ $content | toString | quote }}
 {{- end }}
 {{- end }}
