@@ -6,6 +6,6 @@ metadata:
 data:
 {{- range $name, $content := .Values.config.files }}
     {{ $name }}: |
-        {{- $content | nindent 4 }}
+        {{- $content | toString | nindent 4 }}
 {{- end }}
 {{- end }}
