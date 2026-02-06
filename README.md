@@ -1,109 +1,49 @@
-# Complete Setup & Deployment Guide
+# DevOps GitOps Repository
 
-Based on our session, here is the complete list of commands to replicate your setup: connecting to K3s, installing ArgoCD, and deploying your application with data services.
+This repository manages the deployment of the `k8s-begining` application using **GitOps** principles with ArgoCD and Helm.
 
+## 📂 Repository Structure
 
-## 1. Connect to K3s Cluster
-
-First, configure `kubectl` on your local machine to talk to your K3s VM.
-
-```bash
-# SSH into VM to get kubeconfig (requires root/sudo access)
-ssh user@localhost "sudo cat /etc/rancher/k3s/k3s.yaml" > ~/.kube/config
-
-# Update server IP in the config file
-sed -i '' 's/127.0.0.1/localhost/g' ~/.kube/config
-
-# Verify connection
-kubectl get nodes
+```
+k8s-devops/
+ ├── charts/
+ │   └── k8s-begining/       # Base Helm Chart for the application
+ ├── environments/
+ │   └── dev/                # Dev Environment Configuration
+ │       ├── Chart.yaml      # Umbrella Chart (Dependency -> charts/k8s-begining)
+ │       ├── values.yaml     # Environment-specific overrides (Image tags, configs)
+ │       └── templates/      # Extra resources (Postgres, Redis)
+ └── argocd/                 # ArgoCD Application Manifests
 ```
 
+## 🚀 Deployment Workflow
 
-## 2. Install Helm & ArgoCD
+1.  **CI (GitHub Actions)**:
+    -   Builds Docker Image.
+    -   Updates `environments/dev/values.yaml` with the new tag (`dev-latest` or specific SHA).
+    -   Commits changes to this repo.
 
-If setting up from scratch:
+2.  **CD (ArgoCD)**:
+    -   Detects changes in `environments/dev`.
+    -   Renders the **Helm Chart**.
+    -   Applies manifests to the Kubernetes cluster.
 
-```bash
-# 1. Install Helm (if not installed locally)
-brew install helm
+## 📚 Guides
 
-# 2. Add ArgoCD Helm Chart
-helm repo add argo https://argoproj.github.io/argo-helm
-helm repo update
+-   [**Setup Guide**](SETUP_GUIDE.md): Instructions for installing K3s, Helm, and ArgoCD.
+-   [**Chart Readme**](charts/k8s-begining/README.md): Details about the `k8s-begining` Helm chart.
 
-# 3. Install ArgoCD
-kubectl create namespace argocd
-helm install argocd argo/argo-cd --namespace argocd --version 5.51.6
+## 🛠 Quick Actions
 
-# 4. Verify ArgoCD Pods
-kubectl get pods -n argocd -w
-```
-
-
-## 3. Deploy Data Services (Postgres & Redis)
-
-We deployed these directly to K8s using manifests.
+### Deploy Application
+The application + Postgres + Redis are all managed by the Helm Chart in `environments/dev`.
 
 ```bash
-# 1. Create manifests (if they don't exist)
-# (See environments/dev/postgres.yml and redis.yml in your repo)
-
-# 2. Apply manifests manually (or let ArgoCD handle it if committed)
-kubectl apply -f environments/dev/postgres.yml
-kubectl apply -f environments/dev/redis.yml
-
-# 3. Verify Data Pods
-kubectl get pods -n k8s-begining-dev
-```
-
-
-## 4. Deploy Application via ArgoCD
-
-This connects ArgoCD to your Git repository to manage the app.
-
-```bash
-# 1. Apply the Application Manifest
+# Apply ArgoCD Application
 kubectl apply -f argocd/applications/k8s-begining.yml
-
-# Alternative: Create App via CLI
-# You can also use the UI or this command:
-argocd app create k8s-begining-dev \
-  --repo https://github.com/besanh/k8s-devops.git \
-  --path environments/dev \
-  --revision dev \
-  --dest-server https://kubernetes.default.svc \
-  --dest-namespace k8s-begining-dev \
-  --sync-policy automated \
-  --auto-prune \
-  --self-heal
-
-# 2. Sync the Application (if auto-sync is off or to force update)
-argocd app sync k8s-begining-dev
-
-# OR using kubectl to trigger hard refresh
-kubectl patch application k8s-begining-dev -n argocd --type merge -p '{"metadata":{"annotations":{"argocd.argoproj.io/refresh":"hard"}}}'
-
-# 3. Verify Project Resources
-kubectl get ns k8s-begining-dev
-kubectl get all -n k8s-begining-dev
 ```
 
-
-## 5. Troubleshooting Commands
-
-Commands we used to fix issues:
-
+### Refresh Application
 ```bash
-# Fix DNS on VM (if images fail to pull)
-ssh user@localhost "echo 'nameserver 8.8.8.8' | sudo tee /etc/resolv.conf"
-
-# Restart App Deployment
-kubectl rollout restart deployment/k8s-begining -n k8s-begining-dev
-
-# Check Logs
-kubectl logs -l app=k8s-begining -n k8s-begining-dev
-kubectl logs -l app=postgres -n k8s-begining-dev
-
-# Access App via LoadBalancer (VM IP)
-curl http://localhost:8000/helloworld/user
+argocd app get k8s-begining-dev --refresh
 ```
