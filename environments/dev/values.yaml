@@ -1,6 +1,6 @@
 k8s-begining:
   image:
-    tag: dev-latest
+    tag: dev-sha-207da5d559f8194d0f0ada7e76ce43feb5a882f5
 
   service:
     type: LoadBalancer
