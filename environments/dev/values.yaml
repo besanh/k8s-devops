@@ -1,6 +1,6 @@
 k8s-begining:
   image:
-    tag: dev-latest
+    tag: dev-0acceca
 
   service:
     type: LoadBalancer
