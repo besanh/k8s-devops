@@ -47,3 +47,19 @@ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.pas
 kubectl port-forward svc/argocd-server -n argocd 8080:443
 # Access at https://localhost:8080
 ```
+
+## 4. Troubleshooting
+
+### ArgoCD Not Working After VM Restart
+
+If ArgoCD is not accessible after restarting the VM, run this command on the VM:
+
+```bash
+sudo systemctl restart k3s && sleep 60 && kubectl delete pods -n argocd --all
+```
+
+Then verify:
+```bash
+kubectl get pods -n argocd
+curl -k https://<VM_IP>:8080/
+```
