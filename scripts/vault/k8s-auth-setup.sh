@@ -37,7 +37,7 @@ kubectl exec -n $VAULT_NAMESPACE vault-0 -- vault kv put secret/dev/k8s-begining
 
 echo "5️⃣ Creating policy for k8s-begining..."
 kubectl exec -n $VAULT_NAMESPACE vault-0 -- sh -c 'vault policy write k8s-begining - <<EOF
-path "secret/data/dev/k8s-begining/*" {
+path "secret/dev/data/k8s-begining/*" {
   capabilities = ["read"]
 }
 EOF'

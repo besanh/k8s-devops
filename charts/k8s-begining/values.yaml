@@ -43,4 +43,4 @@ ingress:
 vault:
   enabled: false
   role: "k8s-begining"
-  secretPath: "secret/data/dev/k8s-begining/database"
+  secretPath: "secret/dev/data/k8s-begining/database"

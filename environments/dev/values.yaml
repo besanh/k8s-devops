@@ -8,7 +8,7 @@ k8s-begining:
   vault:
     enabled: true
     role: "k8s-begining"
-    secretPath: "secret/data/dev/k8s-begining/database"
+    secretPath: "secret/dev/data/k8s-begining/database"
 
   config:
     enabled: true
