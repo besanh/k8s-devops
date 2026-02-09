@@ -1,6 +1,6 @@
 k8s-begining:
   image:
-    tag: dev-b91298a
+    tag: "${IMAGE_TAG}"
 
   service:
     type: LoadBalancer
