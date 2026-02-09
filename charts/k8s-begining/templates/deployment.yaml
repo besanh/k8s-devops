@@ -31,6 +31,17 @@ spec:
                   image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
                   imagePullPolicy: {{ .Values.image.pullPolicy }}
 
+                  command: ["/bin/sh", "-c"]
+                  args:
+                    - |
+                      source /vault/secrets/database && \
+                      if [ -f /app/configs/config.tpl ]; then \
+                        envsubst < /app/configs/config.tpl > /app/configs/config.yaml; \
+                      else \
+                        echo "Config template not found, using existing config if any"; \
+                      fi && \
+                      /app/k8s-begining
+
                   ports:
                     - name: http
                       containerPort: {{ .Values.service.http.port }}

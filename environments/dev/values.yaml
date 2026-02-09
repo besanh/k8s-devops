@@ -13,7 +13,7 @@ k8s-begining:
   config:
     enabled: true
     files:
-      config.yaml: |
+      config.tpl: |
         server:
           http:
             addr: 0.0.0.0:8000
@@ -24,8 +24,8 @@ k8s-begining:
         data:
           database:
             driver: pgx
-            # Credentials injected by Vault Agent to /vault/secrets/database
-            source: postgres://anh_admin:anh_admin@postgres:5432/anh_k8s_db?sslmode=disable
+            # Credentials injected via envsubst from Vault secrets
+            source: postgres://${DB_USER}:${DB_PASS}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=disable
           redis:
             addr: redis:6379
             read_timeout: 0.2s
