@@ -17,7 +17,7 @@ Only `setup.sh` is needed - **everything else is done via the Vault UI**.
 
 ## Vault UI
 
-Access: `http://172.16.5.133:30200`
+Access: `http://<VM_IP>:30200`
 
 **Everything below is done in the UI:**
 
