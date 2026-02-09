@@ -25,10 +25,10 @@ kubectl exec -n $VAULT_NAMESPACE vault-0 -- vault write auth/kubernetes/config \
     kubernetes_host="https://kubernetes.default.svc"
 
 echo "3️⃣ Enabling KV secrets engine..."
-kubectl exec -n $VAULT_NAMESPACE vault-0 -- vault secrets enable -path=secret kv-v2 2>/dev/null || echo "   (already enabled)"
+kubectl exec -n $VAULT_NAMESPACE vault-0 -- vault secrets enable -path=secret/dev kv-v2 2>/dev/null || echo "   (already enabled at secret/dev/)"
 
 echo "4️⃣ Creating database secrets..."
-kubectl exec -n $VAULT_NAMESPACE vault-0 -- vault kv put secret/k8s-begining/database \
+kubectl exec -n $VAULT_NAMESPACE vault-0 -- vault kv put secret/dev/k8s-begining/database \
     username="anh_admin" \
     password="anh_admin" \
     host="postgres" \
@@ -37,7 +37,7 @@ kubectl exec -n $VAULT_NAMESPACE vault-0 -- vault kv put secret/k8s-begining/dat
 
 echo "5️⃣ Creating policy for k8s-begining..."
 kubectl exec -n $VAULT_NAMESPACE vault-0 -- sh -c 'vault policy write k8s-begining - <<EOF
-path "secret/data/k8s-begining/*" {
+path "secret/data/dev/k8s-begining/*" {
   capabilities = ["read"]
 }
 EOF'
