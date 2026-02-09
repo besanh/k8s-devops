@@ -18,11 +18,9 @@ spec:
                 vault.hashicorp.com/agent-inject-secret-database: "{{ .Values.vault.secretPath }}"
                 vault.hashicorp.com/agent-inject-template-database: |
                     {{`{{- with secret "`}}{{ .Values.vault.secretPath }}{{`" -}}`}}
-                    export DB_HOST={{`{{ .Data.data.host }}`}}
-                    export DB_PORT={{`{{ .Data.data.port }}`}}
-                    export DB_USER={{`{{ .Data.data.username }}`}}
-                    export DB_PASS={{`{{ .Data.data.password }}`}}
-                    export DB_NAME={{`{{ .Data.data.dbname }}`}}
+                    {{`{{- range $k, $v := .Data.data }}`}}
+                    export {{`{{ $k | toUpper }}`}}="{{`{{ $v }}`}}"
+                    {{`{{- end }}`}}
                     {{`{{- end }}`}}
             {{- end }}
         spec:
@@ -36,11 +34,11 @@ spec:
                     - |
                       . /vault/secrets/database && \
                       if [ -f /app/configs/config.tpl ]; then \
-                        sed -e "s|\${DB_HOST}|$DB_HOST|g" \
-                            -e "s|\${DB_PORT}|$DB_PORT|g" \
-                            -e "s|\${DB_USER}|$DB_USER|g" \
-                            -e "s|\${DB_PASS}|$DB_PASS|g" \
-                            -e "s|\${DB_NAME}|$DB_NAME|g" \
+                        sed -e "s|\${DB_HOST}|$HOST|g" \
+                            -e "s|\${DB_PORT}|$PORT|g" \
+                            -e "s|\${DB_USER}|$USERNAME|g" \
+                            -e "s|\${DB_PASS}|$PASSWORD|g" \
+                            -e "s|\${DB_NAME}|$DBNAME|g" \
                             /app/configs/config.tpl > /tmp/config.yaml; \
                       else \
                         echo "Config template not found"; \
