@@ -36,7 +36,12 @@ spec:
                     - |
                       . /vault/secrets/database && \
                       if [ -f /app/configs/config.tpl ]; then \
-                        envsubst < /app/configs/config.tpl > /tmp/config.yaml; \
+                        sed -e "s|\${DB_HOST}|$DB_HOST|g" \
+                            -e "s|\${DB_PORT}|$DB_PORT|g" \
+                            -e "s|\${DB_USER}|$DB_USER|g" \
+                            -e "s|\${DB_PASS}|$DB_PASS|g" \
+                            -e "s|\${DB_NAME}|$DB_NAME|g" \
+                            /app/configs/config.tpl > /tmp/config.yaml; \
                       else \
                         echo "Config template not found"; \
                       fi && \
