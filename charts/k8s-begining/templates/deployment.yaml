@@ -36,11 +36,11 @@ spec:
                     - |
                       . /vault/secrets/database && \
                       if [ -f /app/configs/config.tpl ]; then \
-                        envsubst < /app/configs/config.tpl > /app/configs/config.yaml; \
+                        envsubst < /app/configs/config.tpl > /tmp/config.yaml; \
                       else \
-                        echo "Config template not found, using existing config if any"; \
+                        echo "Config template not found"; \
                       fi && \
-                      /app/k8s-begining
+                      /app/k8s-begining --config=/tmp/config.yaml
 
                   ports:
                     - name: http
