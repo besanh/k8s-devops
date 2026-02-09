@@ -55,7 +55,7 @@ kubectl port-forward svc/argocd-server -n argocd 8080:443
 If ArgoCD is not accessible after restarting the VM, run this command on the VM:
 
 ```bash
-sudo systemctl restart k3s && sleep 60 && kubectl delete pods -n argocd --all
+systemctl restart k3s && sleep 30 && kubectl delete pods -n argocd --all
 ```
 
 Then verify:
