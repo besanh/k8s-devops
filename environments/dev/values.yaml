@@ -5,6 +5,11 @@ k8s-begining:
   service:
     type: LoadBalancer
 
+  vault:
+    enabled: true
+    role: "k8s-begining"
+    secretPath: "secret/data/k8s-begining/database"
+
   config:
     enabled: true
     files:
@@ -19,6 +24,7 @@ k8s-begining:
         data:
           database:
             driver: pgx
+            # Credentials injected by Vault Agent to /vault/secrets/database
             source: postgres://anh_admin:anh_admin@postgres:5432/anh_k8s_db?sslmode=disable
           redis:
             addr: redis:6379

@@ -39,3 +39,8 @@ secret: {}
 ingress:
   enabled: false
   host: ""
+
+vault:
+  enabled: false
+  role: "k8s-begining"
+  secretPath: "secret/data/k8s-begining/database"
