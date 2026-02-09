@@ -34,7 +34,7 @@ spec:
                   command: ["/bin/sh", "-c"]
                   args:
                     - |
-                      source /vault/secrets/database && \
+                      . /vault/secrets/database && \
                       if [ -f /app/configs/config.tpl ]; then \
                         envsubst < /app/configs/config.tpl > /app/configs/config.yaml; \
                       else \
