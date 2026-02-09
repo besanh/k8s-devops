@@ -52,9 +52,9 @@ spec:
                       containerPort: {{ .Values.service.grpc.port }}
 
                   env:
-                    {{- range $key, $value := .Values.env }}
-                    - name: {{ $key }}
-                      value: "{{ $value }}"
+                    {{- range .Values.env }}
+                    - name: {{ .name }}
+                      value: "{{ .value }}"
                     {{- end }}
 
                   {{- if .Values.secret }}

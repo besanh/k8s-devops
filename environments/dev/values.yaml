@@ -7,8 +7,15 @@ k8s-begining:
 
   vault:
     enabled: true
-    role: "k8s-begining"
-    secretPath: "secret/dev/data/k8s-begining/database"
+    secretPath: "database/creds/k8s-begining"
+
+  env:
+    - name: HOST
+      value: "postgres"
+    - name: PORT
+      value: "5432"
+    - name: DBNAME
+      value: "anh_k8s_db"
 
   config:
     enabled: true
