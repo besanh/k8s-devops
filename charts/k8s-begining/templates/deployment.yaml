@@ -45,7 +45,7 @@ spec:
                       else \
                         echo "Config template not found"; \
                       fi && \
-                      /app/k8s-begining --config=/tmp/config.yaml
+                      /app/k8s-begining -conf /tmp/config.yaml
 
                   ports:
                     - name: http
