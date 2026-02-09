@@ -1,54 +1,26 @@
-# Vault Setup Scripts
+# Vault Setup
 
-Scripts for managing HashiCorp Vault in Kubernetes.
+Only `setup.sh` is needed - **everything else is done via the Vault UI**.
 
 ## Quick Start
 
 ```bash
-cd scripts/vault
+# One-time init (after deploying Vault)
+./setup.sh init
 
-# 1. Initialize Vault (run ONCE)
-./init.sh
-
-# 2. Setup dev/prod environments
-./setup-environments.sh
-
-# 3. Create admin user for UI
-./create-admin.sh admin admin123
-
-# 4. Load secrets for each environment
-./load-secrets.sh dev k8s-begining
-./load-secrets.sh prod k8s-begining
+# After VM restart (unseal Vault)
+./setup.sh unseal
 ```
 
-## Scripts
+## Vault UI
 
-| Script | Description |
-|--------|-------------|
-| `init.sh` | Initialize and unseal Vault (first time only) |
-| `unseal.sh` | Unseal Vault after pod/VM restart |
-| `setup-environments.sh` | Create dev/prod secret paths and policies |
-| `create-admin.sh` | Create admin user for Vault UI |
-| `load-secrets.sh` | Load secrets from env files to Vault |
+Access: `http://172.16.5.133:30200`
 
-## Secrets Files
+**Everything below is done in the UI:**
 
-Edit files in `secrets/` folder:
-- `secrets/dev.env` - Development environment secrets
-- `secrets/prod.env` - Production environment secrets
-
-## After VM Restart
-
-```bash
-# 1. Fix ArgoCD
-systemctl restart k3s && sleep 30 && kubectl delete pods -n argocd --all
-
-# 2. Unseal Vault
-cd scripts/vault
-./unseal.sh
-```
-
-## Access Vault UI
-
-- URL: `http://<VM_IP>:30200`
-- Login: admin / admin123
+| Task | UI Location |
+|------|-------------|
+| Create secrets | Secrets Engines → Enable → KV |
+| Add secrets | Navigate to path → Create secret |
+| Create users | Access → Auth Methods → userpass |
+| Create policies | Policies → Create ACL policy |
