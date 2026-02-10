@@ -9,6 +9,14 @@ k8s-begining:
     enabled: true
     secretPath: "secret/dev/data/k8s-begining/database"
 
+  env:
+    - name: HOST
+      value: "postgres"
+    - name: PORT
+      value: "5432"
+    - name: DBNAME
+      value: "anh_k8s_db"
+
   config:
     enabled: true
     files:

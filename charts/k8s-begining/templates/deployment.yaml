@@ -46,21 +46,7 @@ spec:
                       value: "{{ .value }}"
                     {{- end }}
                     {{- if .Values.vault.enabled }}
-                    - name: HOST
-                      valueFrom:
-                        secretKeyRef:
-                          name: k8s-begining-db-creds
-                          key: host
-                    - name: PORT
-                      valueFrom:
-                        secretKeyRef:
-                          name: k8s-begining-db-creds
-                          key: port
-                    - name: DBNAME
-                      valueFrom:
-                        secretKeyRef:
-                          name: k8s-begining-db-creds
-                          key: dbname
+
                     - name: DB_USER
                       valueFrom:
                         secretKeyRef:
