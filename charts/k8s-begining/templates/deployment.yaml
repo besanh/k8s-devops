@@ -11,18 +11,8 @@ spec:
         metadata:
             labels:
                 app: {{ include "k8s-begining.name" . }}
-            {{- if .Values.vault.enabled }}
             annotations:
-                vault.hashicorp.com/agent-inject: "true"
-                vault.hashicorp.com/role: "{{ .Values.vault.role }}"
-                vault.hashicorp.com/agent-inject-secret-database: "{{ .Values.vault.secretPath }}"
-                vault.hashicorp.com/agent-inject-template-database: |
-                    {{`{{- with secret "`}}{{ .Values.vault.secretPath }}{{`" -}}`}}
-                    {{`{{- range $k, $v := .Data }}`}}
-                    export {{`{{ $k | toUpper }}`}}="{{`{{ $v }}`}}"
-                    {{`{{- end }}`}}
-                    {{`{{- end }}`}}
-            {{- end }}
+                reloader.stakater.com/auto: "true"
         spec:
             containers:
                 - name: k8s-begining-service
@@ -32,12 +22,11 @@ spec:
                   command: ["/bin/sh", "-c"]
                   args:
                     - |
-                      . /vault/secrets/database && \
                       if [ -f /app/configs/config.tpl ]; then \
                         sed -e "s|\${DB_HOST}|$HOST|g" \
                             -e "s|\${DB_PORT}|$PORT|g" \
-                            -e "s|\${DB_USER}|$USERNAME|g" \
-                            -e "s|\${DB_PASS}|$PASSWORD|g" \
+                            -e "s|\${DB_USER}|$DB_USER|g" \
+                            -e "s|\${DB_PASS}|$DB_PASS|g" \
                             -e "s|\${DB_NAME}|$DBNAME|g" \
                             /app/configs/config.tpl > /tmp/config.yaml; \
                       else \
@@ -55,6 +44,18 @@ spec:
                     {{- range .Values.env }}
                     - name: {{ .name }}
                       value: "{{ .value }}"
+                    {{- end }}
+                    {{- if .Values.vault.enabled }}
+                    - name: DB_USER
+                      valueFrom:
+                        secretKeyRef:
+                          name: k8s-begining-db-creds
+                          key: username
+                    - name: DB_PASS
+                      valueFrom:
+                        secretKeyRef:
+                          name: k8s-begining-db-creds
+                          key: password
                     {{- end }}
 
                   {{- if .Values.secret }}
