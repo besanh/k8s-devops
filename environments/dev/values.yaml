@@ -7,15 +7,7 @@ k8s-begining:
 
   vault:
     enabled: true
-    secretPath: "database/creds/k8s-begining"
-
-  env:
-    - name: HOST
-      value: "postgres"
-    - name: PORT
-      value: "5432"
-    - name: DBNAME
-      value: "anh_k8s_db"
+    secretPath: "secret/dev/data/k8s-begining/database"
 
   config:
     enabled: true
@@ -32,7 +24,7 @@ k8s-begining:
           database:
             driver: pgx
             # Credentials injected via envsubst from Vault secrets
-            source: postgres://${DB_USER}:${DB_PASS}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=disable
+            source: postgres://${DB_USER}:${DB_PASS}@${HOST}:${PORT}/${DBNAME}?sslmode=disable
           redis:
             addr: redis:6379
             read_timeout: 0.2s
