@@ -12,7 +12,7 @@ spec:
     helm:
       values: |
         reloader:
-          watchGlobally: false
+          watchGlobally: true
           deployment:
             resources:
               limits:
