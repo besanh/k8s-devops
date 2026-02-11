@@ -6,14 +6,20 @@ This repository manages the deployment of the `k8s-begining` application using *
 
 ```
 k8s-devops/
- ├── charts/
- │   └── k8s-begining/       # Base Helm Chart for the application
- ├── environments/
- │   └── dev/                # Dev Environment Configuration
- │       ├── Chart.yaml      # Umbrella Chart (Dependency -> charts/k8s-begining)
- │       ├── values.yaml     # Environment-specific overrides (Image tags, configs)
- │       └── templates/      # Extra resources (Postgres, Redis)
+ ├── README.md               # Project overview and quick start
+ ├── SETUP_GUIDE.md          # Setup instructions
+ ├── helm/                   # Helm Charts
+ │   ├── common/             # Common Helm Chart (shared templates)
+ │   ├── k8s-begining/       # Main application Helm Chart
+ │   ├── external-secrets/   # External Secrets Operator Helm Chart
+ │   ├── reloader/           # Reloader Helm Chart
+ │   └── vault/              # Vault Helm Chart
  └── argocd/                 # ArgoCD Application Manifests
+     └── application/        # ArgoCD application definitions
+         ├── k8s-begining.yml
+         ├── external-secrets.yml
+         ├── reloader.yml
+         └── vault.yml
 ```
 
 ## 🚀 Deployment Workflow
