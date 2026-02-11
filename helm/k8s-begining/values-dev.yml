@@ -21,7 +21,7 @@ service:
     port: 9000
   type: ClusterIP
 
-secret-name: k8s-begining-secret
+secretName: k8s-begining-secret
 
 appConfig: |
   server:
