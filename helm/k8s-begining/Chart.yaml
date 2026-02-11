@@ -2,9 +2,9 @@ apiVersion: v2
 name: k8s-begining
 description: A Helm chart for beginning Kubernetes resources
 type: application
-version: 0.1.4
-appVersion: 1.0.4
+version: 0.1.5
+appVersion: 1.0.5
 dependencies:
   - name: common
-    version: 0.1.1
+    version: 0.1.2
     repository: "file://../common"
