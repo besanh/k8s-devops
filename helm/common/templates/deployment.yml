@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "common.fullname" . }}
+  annotations:
+    reloader.stakater.com/reload: "true"
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "common.fullname" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "common.fullname" . }}
+    spec:
+      containers:
+        - name: app
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          ports:
+            - name: http
+              containerPort: 8000
+            - name: grpc
+              containerPort: 9000
+
+          volumeMounts:
+            - name: config
+              mountPath: /etc/config
+              readOnly: true
+
+          envFrom:
+            - secretRef:
+                name: {{ .Values.secretName }}
+
+      volumes:
+        - name: config
+          secret:
+            secretName: {{ include "common.fullname" . }}-config

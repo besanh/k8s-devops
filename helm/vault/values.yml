@@ -1,0 +1,9 @@
+vault:
+  server:
+    dev:
+      enabled: true
+    ui:
+      enabled: true
+    serviceAccount:
+      create: true
+      name: vault
