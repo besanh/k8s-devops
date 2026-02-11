@@ -6,8 +6,9 @@ image:
   pullPolicy: Always
 
 serviceAccount:
+  create: true
   annotations: {}
-  name: ""
+  name: "k8s-begining-dev"
 
 containerPort:
   http: 8000
@@ -39,3 +40,8 @@ appConfig: |
       addr: ${REDIS_ADDR}
       read_timeout: 0.2s
       write_timeout: 0.2s
+
+ingress:
+  enabled: false
+  className: ""
+  host: ""
