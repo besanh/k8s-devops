@@ -1,7 +1,7 @@
-{{- include "common.deployment" . }}
+{{ include "common.deployment" . }}
 ---
-{{- include "common.service" . }}
+{{ include "common.service" . }}
 ---
-{{- include "common.ingress" . }}
+{{ include "common.ingress" . }}
 ---
-{{- include "common.serviceAccount" . }}
+{{ include "common.serviceAccount" . }}

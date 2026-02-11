@@ -38,4 +38,4 @@ spec:
         - name: config
           secret:
             secretName: {{ .Values.secretName }}
-{{- end -}}
+{{- end }}

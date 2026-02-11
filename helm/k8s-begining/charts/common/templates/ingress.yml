@@ -19,4 +19,4 @@ spec:
                         port:
                             number: {{ .Values.service.http.port }}
 {{- end}}
-{{- end -}}
+{{- end }}
