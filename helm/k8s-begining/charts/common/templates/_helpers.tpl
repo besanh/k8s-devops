@@ -1,5 +1,8 @@
 {{- define "common.labels" -}}
-{{ .Chart.Name }}
+helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+app.kubernetes.io/name: {{ include "common.fullname" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
 {{- define "common.fullname" -}}
