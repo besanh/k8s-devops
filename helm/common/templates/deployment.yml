@@ -36,4 +36,4 @@ spec:
       volumes:
         - name: config
           secret:
-            secretName: {{ include "common.fullname" . }}-config
+            secretName: {{ .Values.secretName }}
