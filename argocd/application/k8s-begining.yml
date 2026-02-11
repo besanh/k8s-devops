@@ -9,6 +9,9 @@ spec:
     repoURL: https://github.com/besanh/k8s-devops.git
     targetRevision: main
     path: helm/k8s-begining
+    helm:
+      valueFiles:
+        - values.yml
   destination:
     server: https://kubernetes.default.svc
     namespace: k8s-begining
