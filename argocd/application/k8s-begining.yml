@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/besanh/k8s-devops.git
+    repoURL: https://github.com/besanh/k8s-devops
     targetRevision: main
     path: helm/k8s-begining
     helm:
