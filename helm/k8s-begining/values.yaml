@@ -6,6 +6,7 @@ image:
   pullPolicy: Always
 
 serviceAccount:
+  create: true
   # Annotations to add to the service account
   annotations: {}
   # The name of the service account to use.
@@ -42,3 +43,8 @@ appConfig: |
       addr: ${REDIS_ADDR}
       read_timeout: 0.2s
       write_timeout: 0.2s
+
+ingress:
+  enabled: false
+  className: ""
+  host: ""
