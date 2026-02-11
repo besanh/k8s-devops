@@ -1,23 +1,24 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: k8s-begining
+  name: reloader
   namespace: argocd
 spec:
   project: default
   source:
-    repoURL: https://github.com/besanh/k8s-devops
+    repoURL: https://github.com/besanh/k8s-devops.git
     targetRevision: main
-    path: helm/k8s-begining
+    path: helm/reloader
     helm:
       valueFiles:
         - values.yml
   destination:
     server: https://kubernetes.default.svc
-    namespace: k8s-begining
+    namespace: reloader
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+      - ServerSideApply=true

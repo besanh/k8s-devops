@@ -4,33 +4,37 @@ This repository manages the deployment of the `k8s-begining` application using *
 
 ## 📂 Repository Structure
 
-```
 k8s-devops/
  ├── README.md               # Project overview and quick start
  ├── SETUP_GUIDE.md          # Setup instructions
  ├── helm/                   # Helm Charts
- │   ├── common/             # Common Helm Chart (shared templates)
+ │   ├── common/             # Common Helm Chart
  │   ├── k8s-begining/       # Main application Helm Chart
- │   ├── external-secrets/   # External Secrets Operator Helm Chart
- │   ├── reloader/           # Reloader Helm Chart
- │   └── vault/              # Vault Helm Chart
+ │   │   ├── values-dev.yml  # Dev values
+ │   │   ├── values-qa.yml   # QA values
+ │   │   └── values-prod.yml # Prod values
+ │   └── ...                 # Other charts
  └── argocd/                 # ArgoCD Application Manifests
-     └── application/        # ArgoCD application definitions
-         ├── k8s-begining.yml
-         ├── external-secrets.yml
-         ├── reloader.yml
-         └── vault.yml
+     ├── root-app-dev.yml    # Root App for Dev
+     ├── root-app-qa.yml     # Root App for QA
+     ├── root-app-prod.yml   # Root App for Prod
+     ├── root-app-base.yml   # Root App for Base Infra
+     └── apps/               # Application defintions
+         ├── base/           # Shared Infra (Vault, etc.)
+         ├── dev/            # Dev Apps
+         ├── qa/             # QA Apps
+         └── prod/           # Prod Apps
 ```
 
 ## 🚀 Deployment Workflow
 
 1.  **CI (GitHub Actions)**:
     -   Builds Docker Image.
-    -   Updates `environments/dev/values.yaml` with the new tag (`dev-latest` or specific SHA).
+    -   Updates `helm/k8s-begining/values.yml` with the new tag.
     -   Commits changes to this repo.
 
 2.  **CD (ArgoCD)**:
-    -   Detects changes in `environments/dev`.
+    -   Detects changes in `helm/k8s-begining` (for `k8s-begining`) or `argocd/application`.
     -   Renders the **Helm Chart**.
     -   Applies manifests to the Kubernetes cluster.
 
@@ -41,15 +45,21 @@ k8s-devops/
 
 ## 🛠 Quick Actions
 
-### Deploy Application
-The application + Postgres + Redis are all managed by the Helm Chart in `environments/dev`.
+### Deploy Environments
+You can now manage environments separately using the App of Apps pattern.
 
 ```bash
-# Apply ArgoCD Application
-kubectl apply -f argocd/applications/k8s-begining.yml
+# 1. Deploy Base Infrastructure (Vault, Reloader, External Secrets)
+kubectl apply -f argocd/root-app-base.yml
+
+# 2. Deploy Development Environment
+kubectl apply -f argocd/root-app-dev.yml
+
+# 3. Deploy QA Environment
+kubectl apply -f argocd/root-app-qa.yml
+
+# 4. Deploy Production Environment
+kubectl apply -f argocd/root-app-prod.yml
 ```
 
-### Refresh Application
-```bash
-argocd app get k8s-begining-dev --refresh
-```
+Once applied, ArgoCD will automatically sync the applications defined in `argocd/apps/base`, `argocd/apps/dev`, `argocd/apps/qa`, and `argocd/apps/prod` respectively.

@@ -1,20 +1,23 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: reloader
+  name: root-app-qa
   namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
-    repoURL: https://github.com/besanh/k8s-devops
+    repoURL: https://github.com/besanh/k8s-devops.git
     targetRevision: main
-    path: helm/reloader
+    path: argocd/apps/qa
   destination:
     server: https://kubernetes.default.svc
-    namespace: reloader
+    namespace: argocd
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+      - ServerSideApply=true
