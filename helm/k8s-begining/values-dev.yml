@@ -8,7 +8,7 @@ image:
 serviceAccount:
   create: true
   annotations: {}
-  name: "k8s-begining-dev"
+  name: "k8s-begining"
 
 containerPort:
   http: 8000
