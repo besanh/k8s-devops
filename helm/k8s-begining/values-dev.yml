@@ -23,6 +23,25 @@ service:
 
 secretName: k8s-begining-secret
 
+postgresql:
+  enabled: true
+  auth:
+    username: anh_admin
+    password: anh_admin
+    database: anh_k8s_db
+  primary:
+    persistence:
+      enabled: false
+
+redis:
+  enabled: true
+  auth:
+    enabled: false
+  architecture: standalone
+  master:
+    persistence:
+      enabled: false
+
 appConfig: |
   server:
     http:
