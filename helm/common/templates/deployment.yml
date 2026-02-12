@@ -27,7 +27,7 @@ spec:
 
           volumeMounts:
             - name: config
-              mountPath: /etc/config
+              mountPath: /app/configs
               readOnly: true
 
           envFrom:
