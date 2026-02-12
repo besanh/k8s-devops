@@ -27,4 +27,4 @@ spec:
             volumes:
                 - name: config
                   configMap:
-                    name: {{ include "k8s-beginning.fullname" . }}-config
+                    name: {{ include "k8s-beginning.fullname" . }}-dev-config
