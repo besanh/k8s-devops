@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
     name: {{ include "k8s-beginning.fullname" . }}
 spec:
-    replicaCount: {{ include "k8s-beginning.replicaCount" . }}
+    replicas: {{ .Values.replicaCount }}
     selector:
         matchLabels:
             app: {{ include "k8s-beginning.name" . }}

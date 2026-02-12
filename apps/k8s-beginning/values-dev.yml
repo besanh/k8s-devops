@@ -5,4 +5,5 @@ replicaCount: 1
 
 service:
   type: ClusterIP
-  port: 80
+  httpPort: 8000
+  grpcPort: 9000
