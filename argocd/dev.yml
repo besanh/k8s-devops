@@ -2,10 +2,11 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: k8s-beginning-dev
+  namespace: argocd
 spec:
   project: default
   source:
-    repoURL: https://github.com/anhle3532/k8s-devops.git
+    repoURL: https://github.com/besanh/k8s-devops.git
     targetRevision: HEAD
     path: apps/k8s-beginning
     helm:
@@ -14,7 +15,7 @@ spec:
         - values-dev.yml
   destination:
     server: https://kubernetes.default.svc
-    namespace: k8s-dev
+    namespace: k8s-beginning-dev
   syncPolicy:
     automated:
       prune: true
