@@ -23,24 +23,24 @@ service:
 
 secretName: k8s-begining-secret
 
-postgresql:
+timescaledb-single:
   enabled: true
-  auth:
-    username: anh_admin
-    password: anh_admin
-    database: anh_k8s_db
-  primary:
-    persistence:
-      enabled: false
-
-redis:
-  enabled: true
-  auth:
-    enabled: false
-  architecture: standalone
-  master:
-    persistence:
-      enabled: false
+  image:
+    tag: pg16.2-ts2.14.2
+  secrets:
+    credentials:
+      PATRONI_SUPERUSER_USERNAME: postgres
+      PATRONI_SUPERUSER_PASSWORD: password
+      PATRONI_REPLICATION_USERNAME: standby
+      PATRONI_REPLICATION_PASSWORD: password
+      PATRONI_admin_USERNAME: anh_admin
+      PATRONI_admin_PASSWORD: anh_admin
+  patroni:
+    bootstrap:
+      dcs:
+        postgresql:
+          parameters:
+            max_connections: 100
 
 appConfig: |
   server:
