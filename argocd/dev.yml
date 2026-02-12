@@ -1,24 +1,21 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: external-secret
-  namespace: argocd
+  name: k8s-beginning-dev
 spec:
   project: default
   source:
-    repoURL: https://github.com/besanh/k8s-devops.git
-    targetRevision: main
-    path: helm/external-secrets
+    repoURL: https://github.com/anhle3532/k8s-devops.git
+    targetRevision: HEAD
+    path: apps/k8s-beginning
     helm:
       valueFiles:
         - values.yml
+        - values-dev.yml
   destination:
     server: https://kubernetes.default.svc
-    namespace: external-secrets
+    namespace: k8s-dev
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
-      - ServerSideApply=true

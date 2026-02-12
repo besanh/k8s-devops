@@ -1,0 +1,4 @@
+image:
+  tag: dev-latest
+
+replicaCount: 1

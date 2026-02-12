@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: {{ include "k8s-beginning.fullname" . }}
+spec:
+    replicaCount: {{ include "k8s-beginning.replicaCount" . }}
+    selector:
+        matchLabels:
+            app: {{ include "k8s-beginning.name" . }}
+    template:
+        metadata:
+            labels:
+                app: {{ include "k8s-beginning.name" . }}
+        spec:
+            containers:
+                - name: k8s-beginning-service
+                  image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+                  imagePullPolicy: {{ .Values.image.pullPolicy }}
+                  ports:
+                    - containerPort: {{ .Values.service.httpPort }}
+                      name: http
+                    - containerPort: {{ .Values.service.grpcPort }}
+                      name: grpc

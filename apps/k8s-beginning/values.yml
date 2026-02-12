@@ -1,0 +1,11 @@
+image:
+  repository: anhle3532/k8s-begining
+  tag: latest
+  pullPolicy: Always
+
+replicaCount: 1
+
+service:
+  type: ClusterIP
+  httpPort: 8000
+  grpcPort: 9000
