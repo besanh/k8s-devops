@@ -2,3 +2,7 @@ image:
   tag: prod-latest
 
 replicaCount: 3
+
+service:
+  type: ClusterIP
+  port: 80
