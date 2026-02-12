@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "k8s-beginning.fullname" . }}-dev-config
+data:
+  config.yaml: |
+    app:
+      name: k8s-beginning
+      env: dev
