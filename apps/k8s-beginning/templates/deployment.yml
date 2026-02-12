@@ -16,8 +16,15 @@ spec:
                 - name: k8s-beginning-service
                   image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
                   imagePullPolicy: {{ .Values.image.pullPolicy }}
+                  volumeMounts:
+                    - name: config
+                      mountPath: /data/conf
                   ports:
                     - containerPort: {{ .Values.service.httpPort }}
                       name: http
                     - containerPort: {{ .Values.service.grpcPort }}
                       name: grpc
+            volumes:
+                - name: config
+                  configMap:
+                    name: {{ include "k8s-beginning.fullname" . }}-config

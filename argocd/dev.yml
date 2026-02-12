@@ -3,11 +3,13 @@ kind: Application
 metadata:
   name: k8s-beginning-dev
   namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
     repoURL: https://github.com/besanh/k8s-devops.git
-    targetRevision: HEAD
+    targetRevision: main
     path: apps/k8s-beginning
     helm:
       valueFiles:
@@ -20,3 +22,5 @@ spec:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
