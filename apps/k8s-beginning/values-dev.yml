@@ -1,9 +1,0 @@
-image:
-  tag: dev-latest
-
-replicaCount: 1
-
-service:
-  type: ClusterIP
-  httpPort: 8000
-  grpcPort: 9000

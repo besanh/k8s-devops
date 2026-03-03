@@ -1,23 +1,19 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: k8s-beginning-dev
+  name: k8s-beginning
   namespace: argocd
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
 spec:
   project: default
   source:
     repoURL: https://github.com/besanh/k8s-devops.git
     targetRevision: main
-    path: apps/k8s-beginning
-    helm:
-      valueFiles:
-        - values.yml
-        - values-dev.yml
+    path: apps/dev/k8s-beginning
   destination:
     server: https://kubernetes.default.svc
-    namespace: k8s-beginning-dev
+    namespace: dev
   syncPolicy:
     automated:
       prune: true

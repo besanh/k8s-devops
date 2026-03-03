@@ -7,3 +7,7 @@ data:
     app:
       name: k8s-beginning
       env: dev
+    data:
+      database:
+        driver: postgres
+        source: postgres://anh_admin:anh123@postgres.dev.svc.cluster.local:5432/anh_k8s_db?sslmode=disable

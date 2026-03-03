@@ -16,6 +16,13 @@ spec:
                 - name: k8s-beginning-service
                   image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
                   imagePullPolicy: {{ .Values.image.pullPolicy }}
+                  resources:
+                    requests:
+                      cpu: 100m
+                      memory: 128Mi
+                    limits:
+                      cpu: 250m
+                      memory: 256Mi
                   volumeMounts:
                     - name: config
                       mountPath: /data/conf
