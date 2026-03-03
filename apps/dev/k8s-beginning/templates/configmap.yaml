@@ -4,10 +4,15 @@ metadata:
   name: {{ include "k8s-beginning.fullname" . }}-dev-config
 data:
   config.yaml: |
-    app:
-      name: k8s-beginning
-      env: dev
+    server:
+      http:
+        addr: 0.0.0.0:8000
+        timeout: 1s
+      grpc:
+        addr: 0.0.0.0:9000
+        timeout: 1s
     data:
       database:
-        driver: postgres
+        driver: pgx
         source: postgres://anh_admin:anh123@postgres.dev.svc.cluster.local:5432/anh_k8s_db?sslmode=disable
+
