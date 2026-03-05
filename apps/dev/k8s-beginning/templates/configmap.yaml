@@ -14,5 +14,5 @@ data:
     data:
       database:
         driver: pgx
-        source: postgres://anh_admin:anh123@postgres.dev.svc.cluster.local:5432/anh_k8s_db?sslmode=disable
+        source: postgres://anh_admin:[PASSWORD]@postgres.dev.svc.cluster.local:5432/anh_k8s_db?sslmode=disable
 
