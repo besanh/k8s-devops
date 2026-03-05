@@ -2,7 +2,7 @@
 {{- .Chart.Name -}}
 {{- end }}
 
-{{- define "postgres.fullname" - }}
+{{- define "postgres.fullname" -}}
 {{- .Release.Name -}}
 {{- end}}
 
