@@ -1,65 +1,90 @@
 # Setup & Installation Guide
 
-This guide covers the initial setup of the infrastructure: K3s, Helm, and ArgoCD.
+This guide provides step-by-step instructions to set up the infrastructure and deploy the applications using this GitOps repository.
 
-## 1. Connect to K3s Cluster
+## 1. Prerequisites
+- A Kubernetes cluster (K3s recommended).
+- `kubectl` installed locally and configured to access the cluster.
+- `helm` installed locally.
 
-First, configure `kubectl` on your local machine to talk to your K3s VM.
+## 2. Cluster Connectivity (K3s)
+Follow these steps to configure `kubectl` to talk to your K3s server:
 
 ```bash
-# SSH into VM to get kubeconfig (requires root/sudo access)
-ssh user@<VM_IP> "sudo cat /etc/rancher/k3s/k3s.yaml" > ~/.kube/config
+# 1. Fetch the kubeconfig from the server
+ssh user@<SERVER_IP> "sudo cat /etc/rancher/k3s/k3s.yaml" > ~/.kube/config
 
-# Update server IP in the config file
-sed -i '' 's/127.0.0.1/<VM_IP>/g' ~/.kube/config
+# 2. Update the server IP (replace 127.0.0.1 with your SERVER_IP)
+sed -i '' 's/127.0.0.1/<SERVER_IP>/g' ~/.kube/config
 
-# Verify connection
+# 3. Verify the connection
 kubectl get nodes
 ```
 
-## 2. Install Helm & ArgoCD
-
-If setting up from scratch:
+## 3. Install ArgoCD
+If your cluster does not have ArgoCD installed:
 
 ```bash
-# 1. Install Helm (if not installed locally)
-brew install helm
+# 1. Create namespace
+kubectl create namespace argocd
 
-# 2. Add ArgoCD Helm Chart
+# 2. Add Helm repo and install
 helm repo add argo https://argoproj.github.io/argo-helm
 helm repo update
+helm install argocd argo/argo-cd --namespace argocd
 
-# 3. Install ArgoCD
-kubectl create namespace argocd
-helm install argocd argo/argo-cd --namespace argocd --version 5.51.6
-
-# 4. Verify ArgoCD Pods
-kubectl get pods -n argocd -w
-```
-
-## 3. ArgoCD Initial Login
-
-```bash
-# Get Admin Password
+# 3. Access the ArgoCD UI (Initial password)
 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
-
-# Port Forward UI
-kubectl port-forward svc/argocd-server -n argocd 8080:443
-# Access at https://localhost:8080
 ```
 
-## 4. Troubleshooting
+## 4. Deploy Applications (GitOps)
+Once ArgoCD is running, you can deploy the applications by applying the manifests in the `argocd/dev/` directory.
 
-### ArgoCD Not Working After VM Restart
+### Step 1: Create Namespaces
+```bash
+kubectl apply -f apps/dev/namespace.yaml
+```
 
-If ArgoCD is not accessible after restarting the VM, run this command on the VM:
+### Step 2: Deploy PostgreSQL
+```bash
+kubectl apply -f argocd/dev/postgres.yaml
+```
+
+### Step 3: Deploy k8s-beginning Service
+```bash
+kubectl apply -f argocd/dev/k8s-beginning.yaml
+```
+
+## 5. Verification
+After applying the manifests, verify the deployment in the cluster:
 
 ```bash
-systemctl restart k3s && sleep 30 && kubectl delete pods -n argocd --all
+# Check ArgoCD sync status
+kubectl get applications -n argocd
+
+# Check pods in the dev and k8s-beginning-dev namespaces
+kubectl get pods -n dev
+kubectl get pods -n k8s-beginning-dev
+
+# Test access to the health endpoint
+curl -i http://<SERVER_IP>:8000/healthz
 ```
 
-Then verify:
-```bash
-kubectl get pods -n argocd
-curl -k https://<VM_IP>:8080/
-```
+## 🛠 Troubleshooting
+
+### Database Connection Refused
+If `k8s-beginning` crashes with `connection refused`:
+- Ensure the `postgres` pod is in the `Running` state.
+- Verify the `postgres` service exists in the `dev` namespace.
+
+### Password Authentication Failure
+If logs show `password authentication failed`:
+- Confirm the password in `apps/dev/k8s-beginning/templates/configmap.yaml` matches the one in `apps/dev/postgres/values.yaml`.
+- If you changed the password after the database was initialized, you may need to delete the `postgres` pod to force it to re-initialize (since it uses `emptyDir` in this setup).
+
+### ArgoCD Sync Issues
+If changes in Git are not reflected in the cluster:
+- Force a hard refresh:
+  ```bash
+  kubectl patch application <APP_NAME> -n argocd --type merge -p '{"metadata":{"annotations":{"argocd.argoproj.io/refresh":"hard"}}}'
+  ```
