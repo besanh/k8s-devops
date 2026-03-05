@@ -6,6 +6,6 @@ image:
 replicaCount: 1
 
 service:
-  type: ClusterIP
+  type: LoadBalancer
   httpPort: 8000
   grpcPort: 9000
