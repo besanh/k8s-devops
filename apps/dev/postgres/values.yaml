@@ -11,7 +11,7 @@ replicaCount: 1
 
 postgres:
   user: anh_admin
-  password: [PASSWORD]
+  password: "[PASSWORD]"
   db: anh_k8s_db
 
 pvc:
