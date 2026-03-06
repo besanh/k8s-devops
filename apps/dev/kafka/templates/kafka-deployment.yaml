@@ -15,6 +15,13 @@ spec:
       containers:
       - name: kafka
         image: "{{ .Values.kafka.image }}:{{ .Values.kafka.tag }}"
+        command:
+        - /bin/sh
+        - -c
+        - |
+          /etc/confluent/docker/configure
+          kafka-storage format --ignore-formatted -t ${CLUSTER_ID} -c /etc/kafka/kafka.properties
+          /etc/confluent/docker/launch
         ports:
         - containerPort: 9092
           name: kafka
