@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
       - name: kafka
-        image: "{{ .Values.kafka.image }}:7.6.0"
+        image: "{{ .Values.kafka.image }}:{{ .Values.kafka.tag }}"
+        imagePullPolicy: IfNotPresent
         resources:
           requests:
             cpu: 250m
