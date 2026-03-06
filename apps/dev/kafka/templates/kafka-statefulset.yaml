@@ -1,9 +1,11 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: kafka
 spec:
+  serviceName: kafka
   replicas: {{ .Values.kafka.replicaCount }}
+  podManagementPolicy: Parallel
   selector:
     matchLabels:
       app: kafka
@@ -12,14 +14,16 @@ spec:
       labels:
         app: kafka
     spec:
+      securityContext:
+        fsGroup: 1000
       containers:
       - name: kafka
         image: "{{ .Values.kafka.image }}:{{ .Values.kafka.tag }}"
         imagePullPolicy: IfNotPresent
         resources:
           requests:
-            cpu: 100m
-            memory: 256Mi
+            cpu: 250m
+            memory: 512Mi
           limits:
             cpu: 500m
             memory: 512Mi
@@ -54,8 +58,6 @@ spec:
         - name: KAFKA_TRANSACTION_STATE_LOG_MIN_ISR
           value: "1"
         - name: CLUSTER_ID
-          value: "re4L8ePWSU6y5u6r_kA07Q"
-        - name: KAFKA_CLUSTER_ID
           value: "re4L8ePWSU6y5u6r_kA07Q"
         - name: KAFKA_LOG_DIRS
           value: "/var/lib/kafka/data"
