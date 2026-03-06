@@ -22,8 +22,8 @@ spec:
         imagePullPolicy: IfNotPresent
         resources:
           requests:
-            cpu: 250m
-            memory: 512Mi
+            cpu: 10m
+            memory: 64Mi
           limits:
             cpu: 500m
             memory: 512Mi
@@ -33,8 +33,10 @@ spec:
         - containerPort: 9093
           name: controller
         env:
+        - name: KAFKA_ENABLE_KRAFT
+          value: "yes"
         - name: KAFKA_HEAP_OPTS
-          value: "-Xms256M -Xmx256M"
+          value: "-Xms128M -Xmx192M"
         - name: KAFKA_NODE_ID
           value: "1"
         - name: KAFKA_PROCESS_ROLES
@@ -42,7 +44,7 @@ spec:
         - name: KAFKA_LISTENERS
           value: "PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093"
         - name: KAFKA_ADVERTISED_LISTENERS
-          value: "PLAINTEXT://kafka.{{ .Release.Namespace }}.svc.cluster.local:9092"
+          value: "PLAINTEXT://kafka-0.kafka.{{ .Release.Namespace }}.svc.cluster.local:9092"
         - name: KAFKA_INTER_BROKER_LISTENER_NAME
           value: "PLAINTEXT"
         - name: KAFKA_CONTROLLER_LISTENER_NAMES
