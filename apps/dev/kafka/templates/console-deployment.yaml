@@ -19,6 +19,13 @@ spec:
       containers:
       - name: console
         image: "{{ .Values.console.image }}:{{ .Values.console.tag }}"
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 100m
+            memory: 256Mi
         ports:
         - containerPort: 8080
           name: http
