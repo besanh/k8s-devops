@@ -1,6 +1,6 @@
 kafka:
-  image: ubuntu/kafka
-  tag: 3.6-23.10_beta
+  image: confluentinc/cp-kafka
+  tag: latest
   replicaCount: 1
   clusterId: "MkU3OEVBNTcwNTJENDM2Qk"
   service:
@@ -8,7 +8,7 @@ kafka:
     port: 9092
 
 console:
-  image: redpandadata/console
+  image: docker.redpanda.com/redpandadata/console
   tag: latest
   service:
     type: NodePort

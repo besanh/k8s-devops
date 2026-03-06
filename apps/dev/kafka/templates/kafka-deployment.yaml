@@ -41,7 +41,5 @@ spec:
           value: "1"
         - name: KAFKA_TRANSACTION_STATE_LOG_MIN_ISR
           value: "1"
-        - name: KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS
-          value: "0"
-        - name: KAFKA_CLUSTER_ID
+        - name: CLUSTER_ID
           value: {{ .Values.kafka.clusterId | quote }}
