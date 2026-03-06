@@ -1,3 +1,4 @@
+# Triggering re-run after network check
 kafka:
   image: confluentinc/cp-kafka
   tag: latest
