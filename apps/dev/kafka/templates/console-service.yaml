@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-console
+spec:
+  type: {{ .Values.console.service.type }}
+  ports:
+  - port: {{ .Values.console.service.port }}
+    targetPort: http
+    nodePort: {{ .Values.console.service.nodePort }}
+    name: http
+  selector:
+    app: kafka-console

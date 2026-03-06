@@ -1,0 +1,16 @@
+kafka:
+  image: ubuntu/kafka
+  tag: 3.6-23.10_beta
+  replicaCount: 1
+  clusterId: "MkU3OEVBNTcwNTJENDM2Qk"
+  service:
+    type: ClusterIP
+    port: 9092
+
+console:
+  image: redpandadata/console
+  tag: latest
+  service:
+    type: NodePort
+    port: 8080
+    nodePort: 30080
