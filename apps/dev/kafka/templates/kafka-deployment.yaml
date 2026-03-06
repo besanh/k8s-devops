@@ -14,7 +14,14 @@ spec:
     spec:
       containers:
       - name: kafka
-        image: "{{ .Values.kafka.image }}:{{ .Values.kafka.tag }}"
+        image: "{{ .Values.kafka.image }}:7.6.0"
+        resources:
+          requests:
+            cpu: 500m
+            memory: 1Gi
+          limits:
+            cpu: "1"
+            memory: 2Gi
         ports:
         - containerPort: 9092
           name: kafka
@@ -36,7 +43,7 @@ spec:
         - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
           value: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT"
         - name: KAFKA_CONTROLLER_QUORUM_VOTERS
-          value: "1@127.0.0.1:9093"
+          value: "1@localhost:9093"
         - name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR
           value: "1"
         - name: KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR
@@ -44,4 +51,8 @@ spec:
         - name: KAFKA_TRANSACTION_STATE_LOG_MIN_ISR
           value: "1"
         - name: CLUSTER_ID
-          value: {{ .Values.kafka.clusterId | quote }}
+          value: "re4L8ePWSU6y5u6r_kA07Q"
+        - name: KAFKA_LOG_DIRS
+          value: "/tmp/kafka-logs"
+        - name: KAFKA_JMX_PORT
+          value: "9101"
