@@ -1,7 +1,7 @@
 # Triggering re-run after network check
 kafka:
-  image: bitnami/kafka
-  tag: 3.7
+  image: apache/kafka
+  tag: 3.8.0
   replicaCount: 1
   clusterId: "re4L8ePWSU6y5u6r_kA07Q"
   service:
