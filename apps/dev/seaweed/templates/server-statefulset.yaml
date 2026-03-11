@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "seaweed.fullname" . }}
+  labels:
+    {{- include "seaweed.labels" . | nindent 4 }}
+    app.kubernetes.io/component: server
+spec:
+  serviceName: {{ include "seaweed.fullname" . }}
+  replicas: {{ .Values.server.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "seaweed.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: server
+  template:
+    metadata:
+      labels:
+        {{- include "seaweed.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: server
+    spec:
+      containers:
+        - name: server
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.server.masterPort }}
+              name: master
+            - containerPort: {{ .Values.server.masterGrpcPort }}
+              name: master-grpc
+            - containerPort: {{ .Values.server.volumePort }}
+              name: volume
+            - containerPort: {{ .Values.server.volumeGrpcPort }}
+              name: volume-grpc
+            - containerPort: {{ .Values.server.filerPort }}
+              name: filer
+            - containerPort: {{ .Values.server.filerGrpcPort }}
+              name: filer-grpc
+            - containerPort: {{ .Values.server.metricsPort }}
+              name: metrics
+          args:
+            - "server"
+            - "-dir=/data"
+            - "-filer"
+            - "-master.port={{ .Values.server.masterPort }}"
+            - "-volume.port={{ .Values.server.volumePort }}"
+            - "-metricsPort={{ .Values.server.metricsPort }}"
+            {{- if .Values.server.extraArgs }}
+            {{- toYaml .Values.server.extraArgs | nindent 12 }}
+            {{- end }}
+          volumeMounts:
+            - name: data
+              mountPath: /data
+        {{- if .Values.server.resources }}
+        resources:
+          {{- toYaml .Values.server.resources | nindent 10 }}
+        {{- end }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: {{ .Values.server.persistence.size }}

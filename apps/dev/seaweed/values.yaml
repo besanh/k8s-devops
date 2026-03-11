@@ -1,0 +1,23 @@
+image:
+  repository: chrislusf/seaweedfs
+  tag: 3.65
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+server:
+  replicaCount: 1
+  masterPort: 9330
+  masterGrpcPort: 19330
+  volumePort: 9331
+  volumeGrpcPort: 19331
+  filerPort: 8888
+  filerGrpcPort: 18888
+  metricsPort: 9320
+  service:
+    type: ClusterIP
+  persistence:
+    size: 5Gi
+  resources: {}
+  extraArgs: []
