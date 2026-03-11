@@ -16,7 +16,7 @@ server:
   filerGrpcPort: 18888
   metricsPort: 9320
   service:
-    type: ClusterIP
+    type: LoadBalancer
   persistence:
     size: 5Gi
   resources: {}

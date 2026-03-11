@@ -97,3 +97,19 @@ If you need to completely nuke an application and all its managed resources:
 ```bash
 argocd app delete <APP_NAME>
 ```
+
+## Viewing SeaweedFS Files (Web UI)
+
+SeaweedFS comes with a built-in web interface where you can view the cluster status, topology, and **browse uploaded files**. 
+
+To view files specifically, you need to access the **Filer** component, which handles the file and directory structures (similar to a normal file explorer).
+
+To securely access the SeaweedFS Filer UI from your local machine:
+```bash
+# Port-forward the SeaweedFS Filer port (8888) to your local machine
+kubectl port-forward svc/seaweed -n seaweed-dev 8888:8888
+```
+Then, point your web browser to:
+[http://localhost:8888](http://localhost:8888)
+
+This will provide a native directory explorer UI where you can click through folders, see the files you've uploaded, and even upload or download files directly through the browser!
