@@ -1,0 +1,28 @@
+image:
+  repository: anhle3532/k8s-begining
+  tag: latest
+  pullPolicy: Always
+
+replicaCount: 1
+
+components:
+  - name: server
+    command: ["./k8s-begining"]
+    args:
+      - "server"
+      - "-c"
+      - "/app/configs/config.yaml"
+    service:
+      enabled: true
+      type: LoadBalancer
+      httpPort: 8000
+      grpcPort: 9000
+
+  - name: worker
+    command: ["./k8s-begining"]
+    args:
+      - "worker"
+      - "-c"
+      - "/app/configs/config.yaml"
+    service:
+      enabled: false

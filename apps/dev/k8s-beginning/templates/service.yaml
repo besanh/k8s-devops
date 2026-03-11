@@ -1,15 +1,21 @@
+{{- $root := . -}}
+{{- range $index, $component := .Values.components }}
+{{- if $component.service.enabled }}
+---
 apiVersion: v1
 kind: Service
 metadata:
-    name: {{ include "k8s-beginning.fullname" . }}
+    name: {{ include "k8s-beginning.fullname" $root }}-{{ $component.name }}
 spec:
     selector:
-        app: {{ include "k8s-beginning.name" . }}
-    type: {{ .Values.service.type }}
+        app: {{ include "k8s-beginning.name" $root }}-{{ $component.name }}
+    type: {{ $component.service.type }}
     ports:
         - name: http
-          port: 8000
+          port: {{ $component.service.httpPort }}
           targetPort: http
         - name: grpc
-          port: 9000
+          port: {{ $component.service.grpcPort }}
           targetPort: grpc
+{{- end }}
+{{- end }}

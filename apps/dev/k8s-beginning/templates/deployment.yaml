@@ -1,21 +1,32 @@
+{{- $root := . -}}
+{{- range $index, $component := .Values.components }}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: {{ include "k8s-beginning.fullname" . }}
+    name: {{ include "k8s-beginning.fullname" $root }}-{{ $component.name }}
 spec:
-    replicas: {{ .Values.replicaCount }}
+    replicas: {{ $root.Values.replicaCount }}
     selector:
         matchLabels:
-            app: {{ include "k8s-beginning.name" . }}
+            app: {{ include "k8s-beginning.name" $root }}-{{ $component.name }}
     template:
         metadata:
             labels:
-                app: {{ include "k8s-beginning.name" . }}
+                app: {{ include "k8s-beginning.name" $root }}-{{ $component.name }}
         spec:
             containers:
-                - name: k8s-beginning-service
-                  image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-                  imagePullPolicy: {{ .Values.image.pullPolicy }}
+                - name: {{ include "k8s-beginning.name" $root }}-{{ $component.name }}
+                  image: "{{ $root.Values.image.repository }}:{{ $root.Values.image.tag }}"
+                  imagePullPolicy: {{ $root.Values.image.pullPolicy }}
+{{- if $component.command }}
+                  command:
+{{ toYaml $component.command | indent 20 }}
+{{- end }}
+{{- if $component.args }}
+                  args:
+{{ toYaml $component.args | indent 20 }}
+{{- end }}
                   resources:
                     requests:
                       cpu: 100m
@@ -26,12 +37,15 @@ spec:
                   volumeMounts:
                     - name: config
                       mountPath: /app/configs
+{{- if $component.service.enabled }}
                   ports:
-                    - containerPort: {{ .Values.service.httpPort }}
+                    - containerPort: {{ $component.service.httpPort }}
                       name: http
-                    - containerPort: {{ .Values.service.grpcPort }}
+                    - containerPort: {{ $component.service.grpcPort }}
                       name: grpc
+{{- end }}
             volumes:
                 - name: config
                   configMap:
-                    name: {{ include "k8s-beginning.fullname" . }}-dev-config
+                    name: {{ include "k8s-beginning.fullname" $root }}-dev-config
+{{- end }}

@@ -15,7 +15,7 @@ spec:
     path: apps/dev/k8s-beginning
     helm:
       valueFiles:
-        - values.yml
+        - values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: k8s-beginning-dev
