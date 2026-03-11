@@ -55,8 +55,8 @@ graph TD
 │   └── dev/
 │       ├── k8s-beginning.yaml  # ArgoCD App for the main service
 │       └── postgres.yaml       # ArgoCD App for PostgreSQL
+├── docs/                       # Project documentation
 ├── README.md                   # Project overview
-└── SETUP_GUIDE.md              # Installation and deployment guide
 ```
 
 ## 🚀 Key Components
@@ -79,5 +79,13 @@ The backend database for `k8s-beginning`.
 - **Credentials:** Managed via Kubernetes Secrets.
 
 ## 📚 Documentation
-- [**Setup Guide**](SETUP_GUIDE.md): Detailed instructions on cluster setup and initial deployment.
-- [**Walkthrough**](https://github.com/besanh/k8s-devops/blob/main/walkthrough.md): History of fixes and verification steps.
+
+The documentation has been divided into focused topics inside the `docs/` directory:
+
+- [**Cluster Setup**](docs/01-cluster-setup.md): Instructions on initial cluster and ArgoCD setup.
+- [**Deploying Apps**](docs/02-deploying-apps.md): How to bootstrap applications and the GitOps auto-sync cycle.
+- [**Operations & Commands**](docs/03-operations.md): Relevant commands to run, apply, manually sync, and rollback.
+- [**Troubleshooting**](docs/04-troubleshooting.md): Common errors and fixes (e.g. fix VM can't access argo UI).
+
+## Fix VM can't access argo UI
+- `systemctl restart k3s && sleep 30 && kubectl delete pods -n argocd --all`
