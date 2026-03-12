@@ -11,7 +11,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/besanh/k8s-devops.git
-    targetRevision: HEAD
+    targetRevision: main
     path: apps/dev/k8s-beginning
     helm:
       valueFiles:
