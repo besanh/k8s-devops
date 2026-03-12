@@ -10,4 +10,7 @@
 {{- range .Values.labels }}
 {{- .key }}: {{ .value }}
 {{- end -}}
+
+{{- define "postgres.test" -}}
+{{- .Release.Name --}}
 {{- end}}
