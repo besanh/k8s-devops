@@ -5,6 +5,7 @@ metadata:
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "0"
+    test-auto-apply: "working"
 spec:
   project: default
   source:
