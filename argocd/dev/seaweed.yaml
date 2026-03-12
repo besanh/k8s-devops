@@ -11,7 +11,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/besanh/k8s-devops.git
-    targetRevision: main
+    targetRevision: HEAD
     path: apps/dev/seaweed
     helm:
       valueFiles:
