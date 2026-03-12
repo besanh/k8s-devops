@@ -86,6 +86,7 @@ The documentation has been divided into focused topics inside the `docs/` direct
 - [**Deploying Apps**](docs/02-deploying-apps.md): How to bootstrap applications and the GitOps auto-sync cycle.
 - [**Operations & Commands**](docs/03-operations.md): Relevant commands to run, apply, manually sync, and rollback.
 - [**Troubleshooting**](docs/04-troubleshooting.md): Common errors and fixes (e.g. fix VM can't access argo UI).
+- [**GitOps Flow**](docs/05-flow.md): Detailed explanation of the end-to-end development and deployment cycle.
 
 ## Fix VM can't access argo UI
 - `systemctl restart k3s && sleep 30 && kubectl delete pods -n argocd --all`
