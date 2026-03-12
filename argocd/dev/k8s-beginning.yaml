@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: k8s-beginning-dev
+  name: k8s-beginning
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "1"
@@ -18,7 +18,7 @@ spec:
         - values.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: k8s-beginning-dev
+    namespace: k8s-beginning
   syncPolicy:
     automated:
       prune: true
