@@ -1,5 +1,5 @@
 image:
-  repository: anhle3532/k8s-begining
+  repository: anhle3532/k8s-beginning
   tag: latest
   pullPolicy: Always
 
@@ -7,7 +7,7 @@ replicaCount: 1
 
 components:
   - name: server
-    command: ["./k8s-begining"]
+    command: ["./k8s-beginning"]
     args:
       - "server"
       - "-c"
@@ -19,7 +19,7 @@ components:
       grpcPort: 9000
 
   - name: worker
-    command: ["./k8s-begining"]
+    command: ["./k8s-beginning"]
     args:
       - "worker"
       - "-c"
