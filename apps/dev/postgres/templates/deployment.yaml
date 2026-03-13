@@ -1,6 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+    annotations:
+        argocd.test: {{ include "postgres.test" . }}
     name: {{ include "postgres.fullname" . }}
 spec:
     replicas: {{ .Values.replicaCount }}
