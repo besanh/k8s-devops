@@ -9,12 +9,14 @@ The following diagram illustrates the GitOps workflow and the interaction betwee
 ```mermaid
 graph TD
     subgraph "Git Repository (k8s-devops)"
+        R[argocd/root.yaml] -->|Tracks Folder| A
         A[argocd/dev/*.yaml] -->|Defines| B(ArgoCD Applications)
         C[apps/dev/k8s-beginning] -->|Helm Chart| D(Application Manifests)
         E[apps/dev/postgres] -->|Helm Chart| F(Database Manifests)
     end
 
     subgraph "Kubernetes Cluster"
+        Root[Root Application] -->|Auto-Sync| B
         G[ArgoCD Controller] -->|Sync| B
         B -->|Deploy| H[k8s-beginning-dev Namespace]
         B -->|Deploy| I[dev Namespace]
@@ -52,6 +54,7 @@ graph TD
 │   │   └── namespace.yaml      # Namespace definitions
 │   └── prod/                   # Production manifests (placeholder)
 ├── argocd/
+│   ├── root.yaml           # Root App (App of Apps)
 │   └── dev/
 │       ├── k8s-beginning.yaml  # ArgoCD App for the main service
 │       └── postgres.yaml       # ArgoCD App for PostgreSQL
