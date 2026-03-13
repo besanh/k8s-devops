@@ -4,82 +4,69 @@ This repository manages the deployment of the **k8s-beginning** application and 
 
 ## 🏗 Architecture & Flow
 
-The following diagram illustrates the GitOps workflow and the interaction between components within the Kubernetes cluster:
+This repository follows the **"App of Apps"** pattern for multi-cluster configuration management. A root ArgoCD application tracks the `argocd/root.yaml` manifest, which in turn orchestrates all individual infrastructure and service applications.
 
 ```mermaid
 graph TD
-    subgraph "Git Repository (k8s-devops)"
-        R[argocd/root.yaml] -->|Tracks Folder| A
-        A[argocd/dev/*.yaml] -->|Defines| B(ArgoCD Applications)
-        C[apps/dev/k8s-beginning] -->|Helm Chart| D(Application Manifests)
-        E[apps/dev/postgres] -->|Helm Chart| F(Database Manifests)
+    subgraph "GitOps Source of Truth"
+        Root[argocd/root.yaml] -->|Syncs Folder| AppsDir[argocd/dev/*.yaml]
     end
 
-    subgraph "Kubernetes Cluster"
-        Root[Root Application] -->|Auto-Sync| B
-        G[ArgoCD Controller] -->|Sync| B
-        B -->|Deploy| H[k8s-beginning-dev Namespace]
-        B -->|Deploy| I[dev Namespace]
-        
-        subgraph H
-            J[k8s-beginning Pod]
-            K[Service: LoadBalancer]
-        end
-        
-        subgraph I
-            L[postgres Pod]
-            M[Service: ClusterIP]
-            N[Secret: postgres]
-        end
-        
-        J -->|Connects| M
-        K -->|Exposes| J
+    subgraph "ArgoCD Control Plane"
+        AppsDir -->|Orchestrates| K8sApps(ArgoCD Applications)
     end
 
-    User((User)) -->|Access http://IP:8000| K
+    subgraph "Infrastructure Layer"
+        K8sApps -->|Deploys| SeaweedFS[SeaweedFS Storage]
+        K8sApps -->|Deploys| Kafka[Kafka/Redpanda]
+        K8sApps -->|Deploys| Vault[HashiCorp Vault]
+        K8sApps -->|Deploys| Redis[Redis Cache]
+        K8sApps -->|Deploys| Postgres[PostgreSQL DB]
+    end
+
+    subgraph "Service Layer"
+        K8sApps -->|Deploys| K8sBegin[k8s-beginning Service]
+        K8sBegin -->|Reads Secrets| Vault
+        K8sBegin -->|Stores Files| SeaweedFS
+        K8sBegin -->|Messaging| Kafka
+        K8sBegin -->|Caching| Redis
+        K8sBegin -->|Persistence| Postgres
+    end
 ```
 
 ## 📂 Repository Structure
 
 ```text
 .
-├── apps/
-│   ├── dev/
-│   │   ├── k8s-beginning/      # Helm chart for the main service
-│   │   │   ├── templates/      # K8s manifest templates
-│   │   │   └── values.yml       # Dev configuration (LoadBalancer, resources)
-│   │   ├── postgres/           # Helm chart for PostgreSQL
-│   │   │   ├── templates/      # PVC, Secret, Deployment, Service
-│   │   │   └── values.yaml      # DB credentials and image config
-│   │   └── namespace.yaml      # Namespace definitions
-│   └── prod/                   # Production manifests (placeholder)
-├── argocd/
-│   ├── root.yaml           # Root App (App of Apps)
+├── apps/                   # Helm Charts (Infrastructure & Services)
 │   └── dev/
-│       ├── k8s-beginning.yaml  # ArgoCD App for the main service
-│       └── postgres.yaml       # ArgoCD App for PostgreSQL
-├── docs/                       # Project documentation
-├── README.md                   # Project overview
+│       ├── k8s-beginning/  # Main application service
+│       ├── kafka/          # Redpanda-based messaging
+│       ├── postgres/       # Relational database
+│       ├── redis/          # Distributed cache
+│       ├── seaweed/        # Distributed object/file storage
+│       └── vault/          # Secret management
+├── argocd/                 # ArgoCD Application Manifests
+│   ├── root.yaml           # App-of-Apps Root
+│   └── dev/                # Component definitions
+├── docs/                   # Platform documentation
+└── README.md               # Project overview
 ```
 
-## 🚀 Key Components
+## 🛠 Platform Stack
 
-### ArgoCD
-Uses the **GitOps** pattern to ensure the cluster state matches the configuration in this repository. 
-- All applications are defined in `argocd/dev/`.
-- Automatic synchronization is enabled for the `main` branch.
+### Storage & Database
+- **SeaweedFS**: Distributed object store and file system. Used for high-volume file storage and chunking.
+- **PostgreSQL**: Primary relational database for application state.
+- **Redis**: In-memory data store used for caching and session management.
 
-### k8s-beginning Service
-A Go-based (Kratos) application that provides a greeting service and a health check endpoint.
-- **Port:** 8000 (HTTP), 9000 (gRPC)
-- **Health Check:** `/healthz`
-- **Exposure:** Exposed via `LoadBalancer` (NodePort on K3s).
+### Messaging & Security
+- **Kafka (Redpanda)**: High-performance streaming platform for event-driven communication.
+- **HashiCorp Vault**: Secure secret management and sensitive configuration storage.
 
-### PostgreSQL
-The backend database for `k8s-beginning`.
-- **Hostname:** `postgres.dev.svc.cluster.local`
-- **Database:** `anh_k8s_db`
-- **Credentials:** Managed via Kubernetes Secrets.
+### GitOps & Orchestration
+- **ArgoCD**: Declarative continuous delivery tool for Kubernetes.
+- **Helm**: Package manager for Kubernetes, used to template all components.
 
 ## 📚 Documentation
 
@@ -88,7 +75,7 @@ The documentation has been divided into focused topics inside the `docs/` direct
 - [**Cluster Setup**](docs/01-cluster-setup.md): Instructions on initial cluster and ArgoCD setup.
 - [**Deploying Apps**](docs/02-deploying-apps.md): How to bootstrap applications and the GitOps auto-sync cycle.
 - [**Operations & Commands**](docs/03-operations.md): Relevant commands to run, apply, manually sync, and rollback.
-- [**Troubleshooting**](docs/04-troubleshooting.md): Common errors and fixes (e.g. fix VM can't access argo UI).
+- [**Troubleshooting**](docs/04-troubleshooting.md): Common errors and fixes.
 - [**GitOps Flow**](docs/05-flow.md): Detailed explanation of the end-to-end development and deployment cycle.
 
 ## Fix VM can't access argo UI

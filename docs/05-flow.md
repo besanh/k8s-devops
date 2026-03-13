@@ -4,12 +4,12 @@ This document explains the end-to-end GitOps workflow for the **k8s-devops** rep
 
 ## 🏗 The Big Picture
 
-The repository follows a declarative GitOps pattern using ArgoCD and Helm.
+The repository follows a declarative GitOps pattern using ArgoCD and Helm, orchestrated via the **"App of Apps"** pattern.
 
 ```mermaid
-graph LR
+graph TD
     subgraph "Local Workstation"
-        A[Edit Code/Values] --> B[Helm Lint/Template]
+        A[Edit Code/Charts] --> B[Helm Lint/Template]
         B --> C[Git Commit/Push]
     end
 
@@ -17,10 +17,11 @@ graph LR
         C --> D[Main Branch]
     end
 
-    subgraph "Kubernetes Cluster"
-        E[ArgoCD Controller] -- Polls --> D
-        E -- Detects Changes --> F[Sync Application]
-        F -- Applies --> G[K8s Resources]
+    subgraph "Kubernetes Cluster (ArgoCD)"
+        E[Root Application] -->|Tracks Folder| F[argocd/dev/*.yaml]
+        F -->|Defines| G[Individual Applications]
+        G -->|Watches| H[apps/dev/*]
+        G -->|Syncs| I[K8s Resources]
     end
 ```
 

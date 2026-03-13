@@ -98,15 +98,41 @@ If you need to completely nuke an application and all its managed resources:
 argocd app delete <APP_NAME>
 ```
 
-## Viewing SeaweedFS Files (Web UI)
+## 🌐 Accessing Platform UIs
 
-SeaweedFS comes with a built-in web interface where you can view the cluster status, topology, and **browse uploaded files**. 
+Most infrastructure components are exposed via `LoadBalancer` or `NodePort` for easy access from outside the cluster.
 
-To view files specifically, you need to access the **Filer** component, which handles the file and directory structures (similar to a normal file explorer).
+### SeaweedFS (Storage Explorer)
+Use the **Filer** component to browse files and directories.
+- **URL**: `http://<SERVER_IP>:8888`
+- **Features**: Native directory explorer, file upload/download, cluster topology view.
 
-Because SeaweedFS is deployed as a `LoadBalancer` service, you can access it directly using your Kubernetes node (VM) IP address! 
+### Redpanda Console (Kafka UI)
+A comprehensive web interface for managing Kafka clusters, topics, and consumers.
+- **URL**: `http://<SERVER_IP>:30080` (NodePort)
+- **Features**: View messages, manage topics, inspect consumer groups, and monitor cluster health.
 
-Simply point your web browser to:
-`http://<SERVER_IP>:8888`
+### ArgoCD (GitOps UI)
+The central hub for all application deployments.
+- **URL**: `http://<SERVER_IP>:8080`
+- **Login**: Retrieve the admin password with the command below.
+- **Password Command**:
+  ```bash
+  kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
+  ```
 
-This will provide a native directory explorer UI where you can click through folders, see the files you've uploaded, and even upload or download files directly through the browser!
+---
+
+## 🛠 Platform Management
+
+### Pod Status Across Namespaces
+```bash
+# View all pods across the dev platform
+kubectl get pods -A -l "argocd.argoproj.io/instance"
+```
+
+### Force Sync All Apps
+```bash
+# Since we use the App-of-Apps pattern, refreshing the root app syncs everything
+kubectl annotate app root -n argocd argocd.argoproj.io/refresh=hard --overwrite
+```
