@@ -1,6 +1,6 @@
 image:
   repository: anhle3532/k8s-beginning
-  tag: dev-39ef2b0
+  tag: dev-3269f87
   pullPolicy: Always
 
 replicaCount: 1
